@@ -5,6 +5,7 @@ import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupReque
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.GroupResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.services.GroupService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -48,6 +49,15 @@ public class GroupController {
     @DeleteMapping
     public ResponseEntity<Void> delete(@RequestParam @Positive int id) {
         groupService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{groupId}/add/student/{studentId}")
+    public ResponseEntity<Void> addStudentToGroup(
+        @RequestParam @NotNull @Positive Integer groupId,
+        @RequestParam @NotNull @Positive Integer studentId
+    ) {
+        groupService.addStudentToGroup(groupId, studentId);
         return ResponseEntity.noContent().build();
     }
 }

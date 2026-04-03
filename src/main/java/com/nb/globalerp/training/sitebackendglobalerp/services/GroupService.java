@@ -8,10 +8,12 @@ import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Course;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.CourseCompletionStatus;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Group;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Specification;
+import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Student;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.CourseCompletionStatusRepository;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.CourseRepository;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.GroupRepository;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.SpecificationRepository;
+import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.StudentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class GroupService {
 
+    private final StudentRepository studentRepository;
     private final CourseCompletionStatusRepository courseCompletionStatusRepository;
     private final CourseRepository courseRepository;
     private final SpecificationRepository specificationRepository;
@@ -71,6 +74,17 @@ public class GroupService {
         groupResponse.setCourseCompletion(group.getCourseCompletionStatus().getName());
 
         return groupResponse;
+    }
+
+    @Transactional
+    public void addStudentToGroup(int groupId, int studentId) {
+        Group group = groupRepository.findById(groupId)
+            .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + groupId));
+
+        Student student = studentRepository.findById(studentId)
+            .orElseThrow(() -> new EntityNotFoundException("Student not found with id: " + studentId));
+
+        group.getStudents().add(student);
     }
 
     public void delete(int id) {
