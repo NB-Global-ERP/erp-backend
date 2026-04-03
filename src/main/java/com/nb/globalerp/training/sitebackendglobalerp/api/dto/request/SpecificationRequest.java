@@ -11,7 +11,7 @@ import java.time.Instant;
 public record SpecificationRequest(
         @Schema(example = "2025-08-15T00:00:00Z")
         @NotNull(message = "Date is required")
-        Instant date,
+        Instant datetime,
 
         @Schema(example = "42")
         @Positive(message = "Number must be positive")

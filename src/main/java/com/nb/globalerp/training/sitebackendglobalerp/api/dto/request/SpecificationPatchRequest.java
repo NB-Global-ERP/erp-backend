@@ -9,7 +9,7 @@ import java.time.Instant;
 
 public record SpecificationPatchRequest(
         @Schema(example = "2025-08-15T00:00:00Z")
-        Instant date,
+        Instant datetime,
 
         @Schema(example = "42")
         @Positive(message = "Number must be positive")

@@ -30,6 +30,12 @@ public class CompanyController {
 
     private final CompanyService companyService;
 
+    @GetMapping("/list")
+    public ResponseEntity<List<CompanyResponse>> getList() {
+        List<CompanyResponse> response = companyService.findAll();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @GetMapping
     public ResponseEntity<List<CompanyResponse>> getAll(){
         return new ResponseEntity<>(companyService.getAll(), HttpStatus.OK);
