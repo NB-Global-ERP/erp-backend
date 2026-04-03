@@ -2,13 +2,7 @@ spring:
   application:
     name: sitebackend-global-erp
 
-  docker:
-    compose:
-      enabled: false
 
-  springdoc:
-    swagger-ui:
-      path: /swagger
 
 server:
-  port: 57105
+  port: 8091
