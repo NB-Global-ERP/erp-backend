@@ -67,6 +67,7 @@ public class GroupService {
         group.setCourse(course);
         group.setCourseCompletionStatus(courseCompletionStatus);
         group.setSpecification(specification);
+        group.setGroupPrice(new BigDecimal(0));
 
         return groupRepository.save(group).getId();
     }
