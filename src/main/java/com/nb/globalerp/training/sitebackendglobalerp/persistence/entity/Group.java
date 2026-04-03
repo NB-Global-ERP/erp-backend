@@ -49,7 +49,6 @@ public class Group {
     @Column(name = "participant_count")
     private int participantCount;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_completion_id")
     private CourseCompletionStatus courseCompletionStatus;
