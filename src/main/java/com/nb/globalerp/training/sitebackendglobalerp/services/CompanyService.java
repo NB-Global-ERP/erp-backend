@@ -3,6 +3,7 @@ package com.nb.globalerp.training.sitebackendglobalerp.services;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.CompanyPatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.CompanyRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CompanyResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CourseResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.mapper.CompanyMapper;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Company;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.CompanyRepository;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -20,6 +22,13 @@ public class CompanyService {
 
     private final CompanyRepository companyRepository;
     private final CompanyMapper companyMapper;
+
+    public List<CompanyResponse> findAll() {
+        return companyRepository.findAll()
+                .stream()
+                .map(companyMapper::toResponse)
+                .collect(Collectors.toList());
+    }
 
     public CompanyResponse findById(int id) {
         Company company = companyRepository.findById(id)

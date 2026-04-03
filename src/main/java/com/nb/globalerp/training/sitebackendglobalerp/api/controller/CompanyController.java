@@ -3,6 +3,7 @@ package com.nb.globalerp.training.sitebackendglobalerp.api.controller;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.CompanyPatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.CompanyRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CompanyResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CourseCompletionStatusResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.services.CompanyService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
@@ -28,6 +29,12 @@ import java.util.List;
 public class CompanyController {
 
     private final CompanyService companyService;
+
+    @GetMapping("/list")
+    public ResponseEntity<List<CompanyResponse>> getList() {
+        List<CompanyResponse> response = companyService.findAll();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 
     @GetMapping
     public ResponseEntity<List<CompanyResponse>> getAll(){
