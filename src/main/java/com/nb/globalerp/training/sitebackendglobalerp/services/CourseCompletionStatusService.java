@@ -15,6 +15,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -22,6 +25,13 @@ public class CourseCompletionStatusService {
 
     private final CourseCompletionStatusRepository courseCompletionStatusRepository;
     private final CourseCompletionStatusMapper courseCompletionStatusMapper;
+
+    public List<CourseCompletionStatusResponse> findAll() {
+        return courseCompletionStatusRepository.findAll()
+                .stream()
+                .map(courseCompletionStatusMapper::toResponse)
+                .collect(Collectors.toList());
+    }
 
     public CourseCompletionStatusResponse findById(int id) {
         CourseCompletionStatus courseCompletionStatus = courseCompletionStatusRepository.findById(id)

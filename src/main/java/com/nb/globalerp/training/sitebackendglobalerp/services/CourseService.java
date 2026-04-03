@@ -19,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -27,6 +29,13 @@ public class CourseService {
 
     private final CourseRepository courseRepository;
     private final CourseMapper courseMapper;
+
+    public List<CourseResponse> findAll() {
+        return courseRepository.findAll()
+                .stream()
+                .map(courseMapper::toResponse)
+                .collect(Collectors.toList());
+    }
 
     public CourseResponse findById(int id) {
         Course course = courseRepository.findById(id)

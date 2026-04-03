@@ -15,6 +15,5 @@ public interface CourseCompletionStatusMapper {
     CourseCompletionStatusResponse toResponse(CourseCompletionStatus courseCompletionStatus);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "name", ignore = true)
     CourseCompletionStatus toEntity(CourseCompletionStatusRequest request);
 }

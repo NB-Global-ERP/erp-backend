@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @Validated
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/course-completion-statuses")
@@ -26,6 +28,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class CourseCompletionStatusController {
 
     private final CourseCompletionStatusService courseCompletionStatusService;
+
+    @GetMapping("/list")
+    public ResponseEntity<List<CourseCompletionStatusResponse>> getList() {
+        List<CourseCompletionStatusResponse> response = courseCompletionStatusService.findAll();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 
     @GetMapping
     public ResponseEntity<CourseCompletionStatusResponse> getById(@RequestParam @Positive int id) {
