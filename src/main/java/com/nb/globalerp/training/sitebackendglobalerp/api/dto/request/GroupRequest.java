@@ -27,11 +27,6 @@ public record GroupRequest(
         @DecimalMin(value = "0.00", message = "Price must be non-negative")
         BigDecimal pricePerPerson,
 
-        @Schema(example = "120000.00")
-        @NotNull(message = "Group price is required")
-        @DecimalMin(value = "0.00", message = "Price must be non-negative")
-        BigDecimal groupPrice,
-
         @Schema(example = "1")
         @NotNull(message = "Course completion ID is required")
         @Positive(message = "Course completion ID must be positive")
