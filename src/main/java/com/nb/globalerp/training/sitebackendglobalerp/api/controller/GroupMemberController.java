@@ -1,9 +1,9 @@
 package com.nb.globalerp.training.sitebackendglobalerp.api.controller;
 
-import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.StudentPatchRequest;
-import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.StudentRequest;
-import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.StudentResponse;
-import com.nb.globalerp.training.sitebackendglobalerp.services.StudentService;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupMemberPatchRequest;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupMemberRequest;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.GroupMemberResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.services.GroupMemberService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
@@ -21,33 +21,33 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Validated
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/students")
+@RequestMapping("/api/v1/group-members")
 @RestController
-public class StudentController {
+public class GroupMemberController {
 
-    private final StudentService studentService;
+    private final GroupMemberService groupMemberService;
 
     @GetMapping
-    public ResponseEntity<StudentResponse> getById(@RequestParam @Positive int id) {
-        var response = studentService.findById(id);
+    public ResponseEntity<GroupMemberResponse> getById(@RequestParam @Positive int id) {
+        var response = groupMemberService.findById(id);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping
-    public ResponseEntity<Integer> create(@RequestBody @Valid StudentRequest request) {
-        var response = studentService.create(request);
+    public ResponseEntity<Integer> create(@RequestBody @Valid GroupMemberRequest request) {
+        var response = groupMemberService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PatchMapping
-    public ResponseEntity<StudentResponse> update(@RequestParam @Positive int id, @RequestBody @Valid StudentPatchRequest request) {
-        var response = studentService.update(id, request);
+    public ResponseEntity<GroupMemberResponse> update(@RequestParam @Positive int id, @RequestBody @Valid GroupMemberPatchRequest request) {
+        var response = groupMemberService.update(id, request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @DeleteMapping
     public ResponseEntity<Void> delete(@RequestParam @Positive int id) {
-        studentService.delete(id);
+        groupMemberService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

@@ -1,9 +1,9 @@
 package com.nb.globalerp.training.sitebackendglobalerp.api.controller;
 
-import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.StudentPatchRequest;
-import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.StudentRequest;
-import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.StudentResponse;
-import com.nb.globalerp.training.sitebackendglobalerp.services.StudentService;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.SpecificationPatchRequest;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.SpecificationRequest;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.SpecificationResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.services.SpecificationService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
@@ -21,33 +21,33 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Validated
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/students")
+@RequestMapping("/api/v1/specifications")
 @RestController
-public class StudentController {
+public class SpecificationController {
 
-    private final StudentService studentService;
+    private final SpecificationService specificationService;
 
     @GetMapping
-    public ResponseEntity<StudentResponse> getById(@RequestParam @Positive int id) {
-        var response = studentService.findById(id);
+    public ResponseEntity<SpecificationResponse> getById(@RequestParam @Positive int id) {
+        var response = specificationService.findById(id);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping
-    public ResponseEntity<Integer> create(@RequestBody @Valid StudentRequest request) {
-        var response = studentService.create(request);
+    public ResponseEntity<Integer> create(@RequestBody @Valid SpecificationRequest request) {
+        var response = specificationService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PatchMapping
-    public ResponseEntity<StudentResponse> update(@RequestParam @Positive int id, @RequestBody @Valid StudentPatchRequest request) {
-        var response = studentService.update(id, request);
+    public ResponseEntity<SpecificationResponse> update(@RequestParam @Positive int id, @RequestBody @Valid SpecificationPatchRequest request) {
+        var response = specificationService.update(id, request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @DeleteMapping
     public ResponseEntity<Void> delete(@RequestParam @Positive int id) {
-        studentService.delete(id);
+        specificationService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }
