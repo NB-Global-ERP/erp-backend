@@ -49,9 +49,6 @@ public class Group {
     @Column(name = "participant_count")
     private int participantCount;
 
-    @Column(name = "group_price")
-    private BigDecimal groupPrice;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_completion_id")
     private CourseCompletionStatus courseCompletionStatus;
