@@ -1,4 +1,4 @@
-package com.nb.globalerp.training.sitebackendglobalerp.api;
+package com.nb.globalerp.training.sitebackendglobalerp.api.v1;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -10,7 +10,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/students")
 @Tag(name = "Students", description = "Students operations")
-public class StudentsController {
+public class StudentController {
+
+    private final StudentService studentService;
+
+    public StudentController(StudentService userService) {
+        this.studentService = userService;
+    }
 
     // GET /students
     @Operation(summary = "Получить список студентов")
