@@ -13,31 +13,21 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "students")
+@Table(name = "companies")
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class StudentData {
+public class Company {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    private int studentId;
+    private int id;
 
-    @Column
-    private String firstName;
+    @Column(name = "company_code")
+    private String companyCode;
 
-    @Column
-    private String middleName;
-
-    @Column
-    private String lastName;
-
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "company_id")
-//    private Integer companyId;
-
-    @Column
-    private String email;
+    @Column(name = "company_name")
+    private String companyName;
 }
