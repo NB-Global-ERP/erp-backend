@@ -42,6 +42,11 @@ public class CourseController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @GetMapping("/count")
+    public ResponseEntity<Long> count(){
+        return new ResponseEntity<>(courseService.count(), HttpStatus.OK);
+    }
+
     @PostMapping
     public ResponseEntity<Integer> create(@RequestBody @Valid CourseRequest request) {
         var response = courseService.create(request);

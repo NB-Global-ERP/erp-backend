@@ -66,10 +66,14 @@ public class CompanyService {
         }
     }
 
-    public List<CompanyResponse> getAll(){
+    public List<CompanyResponse> getAll() {
         return companyRepository.findAll()
                 .stream()
                 .map(companyMapper::toResponse)
                 .toList();
+    }
+
+    public long count() {
+        return companyRepository.count();
     }
 }
