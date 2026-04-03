@@ -4,10 +4,14 @@ import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.CompanyPat
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.CompanyRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CompanyResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.mapper.CompanyMapper;
+import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Company;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.CompanyRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -18,18 +22,45 @@ public class CompanyService {
     private final CompanyMapper companyMapper;
 
     public CompanyResponse findById(int id) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        Company company = companyRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Company not found with id:%d".formatted(id)));
+
+        return companyMapper.toResponse(company);
     }
 
     public int create(CompanyRequest request) {
-        throw new UnsupportedOperationException("Not implemented yet");
+       Company company = companyMapper.toEntity(request);
+       return companyRepository.save(company).getId();
     }
 
     public CompanyResponse update(int id, CompanyPatchRequest request) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        Company company = companyRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Company not found with id:%d".formatted(id)));
+
+        if(!request.companyCode().isBlank()){
+            company.setCompanyCode(request.companyCode());
+        }
+        if(!request.companyName().isBlank()){
+            company.setCompanyName(request.companyName());
+        }
+
+        Company answer = companyRepository.save(company);
+        return companyMapper.toResponse(answer);
+
     }
 
     public void delete(int id) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        try{
+            companyRepository.deleteById(id);
+        } catch (Exception ignored) {
+
+        }
+    }
+
+    public List<CompanyResponse> getAll(){
+        return companyRepository.findAll()
+                .stream()
+                .map(companyMapper::toResponse)
+                .toList();
     }
 }
