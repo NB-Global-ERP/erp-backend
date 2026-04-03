@@ -14,7 +14,7 @@ public class GroupResponse {
     private Instant dateBegin;
     private Instant dateEnd;
     private BigDecimal pricePerPerson;
-    private int participantCount;
+    private long participantCount;
     private BigDecimal groupPrice;
     private String courseCompletion;
     private float averageProgress;

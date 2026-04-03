@@ -11,6 +11,7 @@ import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Specifi
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Student;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.CourseCompletionStatusRepository;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.CourseRepository;
+import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.GroupMemberRepository;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.GroupRepository;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.SpecificationRepository;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.StudentRepository;
@@ -19,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -30,6 +33,7 @@ public class GroupService {
     private final CourseRepository courseRepository;
     private final SpecificationRepository specificationRepository;
     private final GroupRepository groupRepository;
+    private final GroupMemberRepository groupMemberRepository;
 
     private final GroupMapper groupMapper;
 
@@ -38,7 +42,11 @@ public class GroupService {
         Group group = groupRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + id));
 
+        long participantCount = groupMemberRepository.countByGroupId(id);
+
         GroupResponse groupResponse = groupMapper.toGroupResponse(group);
+        groupResponse.setParticipantCount(participantCount);
+        groupResponse.setGroupPrice(new BigDecimal(participantCount).multiply(group.getPricePerPerson()));
         groupResponse.setCourseCompletion(group.getCourseCompletionStatus().getName());
 
         return groupResponse;

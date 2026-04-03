@@ -2,6 +2,7 @@ package com.nb.globalerp.training.sitebackendglobalerp.api.controller;
 
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.SpecificationPatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.SpecificationRequest;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CreateResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.SpecificationResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.services.SpecificationService;
 import jakarta.validation.Valid;
@@ -34,9 +35,9 @@ public class SpecificationController {
     }
 
     @PostMapping
-    public ResponseEntity<Integer> create(@RequestBody @Valid SpecificationRequest request) {
-        var response = specificationService.create(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    public ResponseEntity<CreateResponse> create(@RequestBody @Valid SpecificationRequest request) {
+        var id = specificationService.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new CreateResponse(id));
     }
 
     @PatchMapping

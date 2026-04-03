@@ -2,6 +2,7 @@ package com.nb.globalerp.training.sitebackendglobalerp.api.controller;
 
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupPatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupRequest;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CreateResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.GroupResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.services.GroupService;
 import jakarta.validation.Valid;
@@ -35,9 +36,9 @@ public class GroupController {
     }
 
     @PostMapping
-    public ResponseEntity<Integer> create(@RequestBody @Valid GroupRequest request) {
-        var response = groupService.create(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    public ResponseEntity<CreateResponse> create(@RequestBody @Valid GroupRequest request) {
+        var id = groupService.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new CreateResponse(id));
     }
 
     @PatchMapping

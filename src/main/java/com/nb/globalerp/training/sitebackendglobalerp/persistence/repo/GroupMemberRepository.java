@@ -4,5 +4,11 @@ import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.GroupMe
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
-public interface GroupMemberRepository extends JpaRepository<GroupMember, Integer> {}
+public interface GroupMemberRepository extends JpaRepository<GroupMember, Integer> {
+    List<GroupMember> findByGroupId(int groupId);
+
+    long countByGroupId(int groupId);
+}

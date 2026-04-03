@@ -4,6 +4,7 @@ import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.CoursePatc
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.CourseRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CourseCompletionStatusResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CourseResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CreateResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.services.CourseService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
@@ -43,9 +44,9 @@ public class CourseController {
     }
 
     @PostMapping
-    public ResponseEntity<Integer> create(@RequestBody @Valid CourseRequest request) {
-        var response = courseService.create(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    public ResponseEntity<CreateResponse> create(@RequestBody @Valid CourseRequest request) {
+        var id = courseService.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new CreateResponse(id));
     }
 
     @PatchMapping

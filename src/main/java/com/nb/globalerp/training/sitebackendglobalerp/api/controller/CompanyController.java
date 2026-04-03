@@ -3,6 +3,7 @@ package com.nb.globalerp.training.sitebackendglobalerp.api.controller;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.CompanyPatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.CompanyRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CompanyResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CreateResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.services.CompanyService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
@@ -35,8 +36,8 @@ public class CompanyController {
     }
 
     @PostMapping
-    public ResponseEntity<Integer> create(@RequestBody @Valid CompanyRequest request) {
-        return new ResponseEntity<>(companyService.create(request), HttpStatus.CREATED);
+    public ResponseEntity<CreateResponse> create(@RequestBody @Valid CompanyRequest request) {
+        return new ResponseEntity<>(new CreateResponse(companyService.create(request)), HttpStatus.CREATED);
     }
 
     @PatchMapping

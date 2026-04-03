@@ -2,6 +2,7 @@ package com.nb.globalerp.training.sitebackendglobalerp.api.controller;
 
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.StudentPatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.StudentRequest;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CreateResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.StudentResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.services.StudentService;
 import jakarta.validation.Valid;
@@ -35,9 +36,9 @@ public class StudentController {
     }
 
     @PostMapping
-    public ResponseEntity<Integer> create(@RequestBody @Valid StudentRequest request) {
-        var response = studentService.create(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    public ResponseEntity<CreateResponse> create(@RequestBody @Valid StudentRequest request) {
+        var id = studentService.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new CreateResponse(id));
     }
 
     @PatchMapping
