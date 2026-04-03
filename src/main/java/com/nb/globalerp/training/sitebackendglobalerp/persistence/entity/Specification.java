@@ -32,7 +32,7 @@ public class Specification {
     private int id;
 
     @Column
-    private Instant date;
+    private Instant datetime;
 
     @Column
     private int number;
