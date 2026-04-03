@@ -41,6 +41,11 @@ public class CompanyController {
         return new ResponseEntity<>(companyService.getAll(), HttpStatus.OK);
     }
 
+    @GetMapping("/count")
+    public ResponseEntity<Long> count(){
+        return new ResponseEntity<>(companyService.count(), HttpStatus.OK);
+    }
+
     @PostMapping
     public ResponseEntity<CreateResponse> create(@RequestBody @Valid CompanyRequest request) {
         return new ResponseEntity<>(new CreateResponse(companyService.create(request)), HttpStatus.CREATED);

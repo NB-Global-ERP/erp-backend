@@ -60,7 +60,10 @@ public class CourseService {
         return courseMapper.toResponse(courseRepository.save(course));
     }
 
-    public void delete(int id) {
-        courseRepository.deleteById(id);
+    public void delete(int id) {courseRepository.deleteById(id);
+    }
+
+    public long count() {
+        return courseRepository.count();
     }
 }
