@@ -22,5 +22,5 @@ public interface GroupMapper {
 
     GroupResponse toGroupResponse(Group group);
 
-    void updateGroupMapper(@MappingTarget Group group, GroupPatchRequest request);
+    void updateGroupEntity(@MappingTarget Group group, GroupPatchRequest request);
 }

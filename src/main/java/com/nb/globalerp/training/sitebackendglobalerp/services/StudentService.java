@@ -27,14 +27,14 @@ public class StudentService {
     public StudentResponse findById(Integer id) {
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Student not found with id:%d".formatted(id)));
-        return studentMapper.toResponse(student);
+        return studentMapper.toStudentResponse(student);
     }
 
     public int create(StudentRequest request) {
         Company company = companyRepository.findById(request.companyId())
                         .orElseThrow(() -> new EntityNotFoundException("Company not found with id:%d".formatted(request.companyId())));
 
-        Student student = studentMapper.toEntity(request);
+        Student student = studentMapper.toStudentEntity(request);
         student.setCompany(company);
 
         return studentRepository.save(student).getId();
@@ -57,7 +57,7 @@ public class StudentService {
         if (request.email() != null) student.setEmail(request.email());
 
         Student answer = studentRepository.save(student);
-        return studentMapper.toResponse(answer);
+        return studentMapper.toStudentResponse(answer);
     }
 
     public void delete(Integer id) {
@@ -72,7 +72,7 @@ public class StudentService {
     public List<StudentResponse> getAll(){
         return studentRepository.findAll()
                 .stream()
-                .map(studentMapper::toResponse)
+                .map(studentMapper::toStudentResponse)
                 .toList();
     }
 }

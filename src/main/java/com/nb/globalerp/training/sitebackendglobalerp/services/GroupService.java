@@ -68,7 +68,7 @@ public class GroupService {
         Group group = groupRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + id));
 
-        groupMapper.updateGroupMapper(group, request);
+        groupMapper.updateGroupEntity(group, request);
 
         GroupResponse groupResponse = groupMapper.toGroupResponse(groupRepository.save(group));
         groupResponse.setCourseCompletion(group.getCourseCompletionStatus().getName());

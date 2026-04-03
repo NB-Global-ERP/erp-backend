@@ -5,15 +5,14 @@ import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.StudentRe
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Student;
 import org.mapstruct.*;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
-        nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(
+    componentModel = MappingConstants.ComponentModel.SPRING,
+    unmappedSourcePolicy = ReportingPolicy.IGNORE,
+    unmappedTargetPolicy = ReportingPolicy.IGNORE
+)
 public interface StudentMapper {
 
-    @Mapping(source = "company.id", target = "companyId")
-    StudentResponse toResponse(Student student);
+    StudentResponse toStudentResponse(Student student);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "company", ignore = true)
-    Student toEntity(StudentRequest request);
+    Student toStudentEntity(StudentRequest request);
 }
