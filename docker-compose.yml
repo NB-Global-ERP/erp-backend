@@ -1,7 +1,7 @@
 services:
-#  consent_zookeeper:
+#  erp_zookeeper:
 #    image: confluentinc/cp-zookeeper:7.9.0
-#    container_name: "consent-zookeeper"
+#    container_name: "erp-zookeeper"
 #    environment:
 #      ZOOKEEPER_CLIENT_PORT: 2181
 #      ZOOKEEPER_TICK_TIME: 2000
@@ -10,26 +10,24 @@ services:
 #    networks:
 #      - sopd_sign_network
 #
-#  consent_kafka:
+#  erp_kafka:
 #    image: confluentinc/cp-kafka:7.9.0
 #    env_file:
 #      - .env
-#    container_name: "consent-kafka"
+#    container_name: "erp-kafka"
 #    depends_on:
-#      - consent_zookeeper
+#      - erp_zookeeper
 #    restart: unless-stopped
 #    ports:
 #      - ${KAFKA_OUTSIDE_PORT}:${KAFKA_OUTSIDE_PORT}
 #    environment:
 #      KAFKA_BROKER_ID: 1
-#      KAFKA_ZOOKEEPER_CONNECT: consent_zookeeper:2181
-#      KAFKA_ADVERTISED_LISTENERS: INTERNAL://consent_kafka:29092,EXTERNAL://${KAFKA_OUTSIDE_HOST}:${KAFKA_OUTSIDE_PORT}
+#      KAFKA_ZOOKEEPER_CONNECT: erp_zookeeper:2181
+#      KAFKA_ADVERTISED_LISTENERS: INTERNAL://erp_kafka:29092,EXTERNAL://${KAFKA_OUTSIDE_HOST}:${KAFKA_OUTSIDE_PORT}
 #      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
 #      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
 #      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 #      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
-#    networks:
-#      - sopd_sign_network
 
   erp_db_postgres:
     container_name: "erp-postgres"
@@ -42,8 +40,6 @@ services:
       POSTGRES_DB: ${ERP_PG_DATABASE}
     ports:
       - "${ERP_PG_PORT}:5432"
-    networks:
-      - sopd_sign_network
 
   erp_flyway:
     container_name: "erp-flyway"
@@ -56,14 +52,12 @@ services:
     command:
       - migrate
     volumes:
-      - ./src/main/resources/db.schema:/flyway/sql
+      - ./src/main/resources/db/schema:/flyway/sql
     image: 'flyway/flyway:11.4'
     depends_on:
       erp_db_postgres:
         condition: service_started
         restart: true
-    networks:
-      - sopd_sign_network
 
 #  service:
 #    build:
@@ -72,7 +66,7 @@ services:
 #    env_file:
 #      - .env
 #    environment:
-#      PG_HOST: consent_db_postgres
+#      PG_HOST: erp_db_postgres
 #      PG_PORT: 5432
 #      PUBLIC_KEY_FILE_PATH: keys/public/jws-public.pem
 #    ports:
@@ -80,12 +74,6 @@ services:
 #    volumes:
 #      - ./src/main/resources/keys/public:/keys/public
 #    depends_on:
-#      - consent_db_postgres
+#      - erp_db_postgres
 #    networks:
-#      - sopd_sign_network
-
-networks:
-  erp_network:
-    name: "erp-network"
-    driver: bridge
-    external: true
+#      - erp_network
