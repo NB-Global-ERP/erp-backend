@@ -43,9 +43,29 @@ public class CourseController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/count")
+    @GetMapping("/analytics/count")
     public ResponseEntity<Long> count(){
         return new ResponseEntity<>(courseService.count(), HttpStatus.OK);
+    }
+
+    @GetMapping("/analytics/sum")
+    public ResponseEntity<Long> sum(){
+        return new ResponseEntity<>(courseService.totalDuration(), HttpStatus.OK);
+    }
+
+    @GetMapping("/analytics/avg")
+    public ResponseEntity<Double> avg(){
+        return new ResponseEntity<>(courseService.averageDuration(), HttpStatus.OK);
+    }
+
+    @GetMapping("/analytics/min")
+    public ResponseEntity<Integer> min(){
+        return new ResponseEntity<>(courseService.minDuration(), HttpStatus.OK);
+    }
+
+    @GetMapping("/analytics/max")
+    public ResponseEntity<Integer> max(){
+        return new ResponseEntity<>(courseService.maxDuration(), HttpStatus.OK);
     }
 
     @PostMapping

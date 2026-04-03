@@ -63,7 +63,23 @@ public class CourseService {
     public void delete(int id) {courseRepository.deleteById(id);
     }
 
-    public long count() {
+    public Long count() {
         return courseRepository.count();
+    }
+
+    public Long totalDuration() {
+        return courseRepository.sumDurationInDays();
+    }
+
+    public Double averageDuration() {
+        return courseRepository.avgDurationInDays();
+    }
+
+    public Integer minDuration() {
+        return courseRepository.minDurationInDays();
+    }
+
+    public Integer maxDuration() {
+        return courseRepository.maxDurationInDays();
     }
 }
