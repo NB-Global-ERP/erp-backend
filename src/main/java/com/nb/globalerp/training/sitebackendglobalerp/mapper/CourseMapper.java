@@ -15,6 +15,5 @@ public interface CourseMapper {
     CourseResponse toResponse(Course course);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "name", ignore = true)
     Course toEntity(CourseRequest request);
 }

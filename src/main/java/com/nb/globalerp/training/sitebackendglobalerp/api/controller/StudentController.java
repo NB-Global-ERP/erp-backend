@@ -10,14 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Validated
 @RequiredArgsConstructor
@@ -27,9 +22,15 @@ public class StudentController {
 
     private final StudentService studentService;
 
-    @GetMapping
-    public ResponseEntity<StudentResponse> getById(@RequestParam @Positive int id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<StudentResponse> getById(@PathVariable @Positive Integer id) {
         var response = studentService.findById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<StudentResponse>> getAll(){
+        var response = studentService.getAll();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
@@ -40,13 +41,13 @@ public class StudentController {
     }
 
     @PatchMapping
-    public ResponseEntity<StudentResponse> update(@RequestParam @Positive int id, @RequestBody @Valid StudentPatchRequest request) {
+    public ResponseEntity<StudentResponse> update(@RequestParam @Positive Integer id, @RequestBody @Valid StudentPatchRequest request) {
         var response = studentService.update(id, request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> delete(@RequestParam @Positive int id) {
+    public ResponseEntity<Void> delete(@RequestParam @Positive Integer id) {
         studentService.delete(id);
         return ResponseEntity.noContent().build();
     }
