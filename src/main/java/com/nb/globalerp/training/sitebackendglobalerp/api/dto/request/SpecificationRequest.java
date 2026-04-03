@@ -9,7 +9,7 @@ import java.time.Instant;
 
 public record SpecificationRequest(
         @NotNull(message = "Date is required")
-        Instant date,
+        Instant datetime,
 
         @Positive(message = "Number must be positive")
         int number,

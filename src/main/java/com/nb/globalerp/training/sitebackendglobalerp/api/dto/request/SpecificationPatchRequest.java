@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 public record SpecificationPatchRequest(
-        Instant date,
+        Instant datetime,
 
         @Positive(message = "Number must be positive")
         Integer number,
