@@ -1,4 +1,4 @@
-package com.nb.globalerp.training.sitebackendglobalerp.services.student;
+package com.nb.globalerp.training.sitebackendglobalerp.services;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
