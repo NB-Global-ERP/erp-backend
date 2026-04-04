@@ -25,15 +25,15 @@ public class GroupMemberController {
         return new ResponseEntity<>(groupMemberService.getByGroupId(groupId), HttpStatus.OK);
     }
 
-    @PatchMapping()
-    public ResponseEntity<List<GroupMemberResponse>> patchByGroupId(@RequestBody @Valid List<GroupMemberPatchRequest> list){
-        return new ResponseEntity<>(groupMemberService.patchByGroupId(list), HttpStatus.OK);
+    @PatchMapping("/{groupId}")
+    public ResponseEntity<List<GroupMemberResponse>> patchByGroupId(@RequestBody @Valid List<GroupMemberPatchRequest> list, @PathVariable @Positive Integer groupId){
+        return new ResponseEntity<>(groupMemberService.patchByGroupId(list, groupId), HttpStatus.OK);
     }
 
 
-    @DeleteMapping()
-    public ResponseEntity<Void> delete(@RequestBody @Valid List<GroupMemberPatchRequest> list){
-        groupMemberService.delete(list);
+    @DeleteMapping("/{groupId}")
+    public ResponseEntity<Void> delete(@RequestBody @Valid List<GroupMemberPatchRequest> list, @PathVariable @Positive Integer groupId){
+        groupMemberService.delete(list, groupId);
         return ResponseEntity.noContent().build();
     }
 }

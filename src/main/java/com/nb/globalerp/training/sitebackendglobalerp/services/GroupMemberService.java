@@ -3,8 +3,11 @@ package com.nb.globalerp.training.sitebackendglobalerp.services;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupMemberPatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.GroupMemberResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.mapper.GroupMemberMapper;
+import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Group;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.GroupMember;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.GroupMemberRepository;
+import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.GroupRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +25,8 @@ public class GroupMemberService {
     private final GroupMemberRepository groupMemberRepository;
     private final GroupMemberMapper mapper;
 
+    private final GroupRepository groupRepository;
+
 
     public List<GroupMemberResponse> getByGroupId(Integer groupId){
         return groupMemberRepository.findGroupMemberByGroupId(groupId)
@@ -30,8 +35,8 @@ public class GroupMemberService {
                 .toList();
     }
 
-    @Transactional
-    public List<GroupMemberResponse> patchByGroupId(List<GroupMemberPatchRequest> list){
+
+    public List<GroupMemberResponse> patchByGroupId(List<GroupMemberPatchRequest> list, Integer groupId){
         List<Integer> ids = list.stream()
                 .map(GroupMemberPatchRequest::id)
                 .toList();
@@ -48,16 +53,33 @@ public class GroupMemberService {
             groupMember.setCompletionPercent(req.completionPercent());
         }
 
+        groupMemberRepository.saveAll(groupMembers);
+        countAverageProgress(groupId);
 
 
         return groupMembers.stream().map(mapper::toGroupMemberResponse).toList();
     }
 
-    public void delete(List<GroupMemberPatchRequest> list){
+    public void delete(List<GroupMemberPatchRequest> list, Integer groupId){
         List<Integer> ids = list.stream()
                 .map(GroupMemberPatchRequest::id)
                 .toList();
         groupMemberRepository.deleteAllById(ids);
+
+        countAverageProgress(groupId);
+
+    }
+
+    private void countAverageProgress(Integer groupId){
+        Group group = groupRepository.findById(groupId).orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + groupId));
+
+        float averageProgress = groupMemberRepository.sumPercentByGroupId(groupId)
+                / groupMemberRepository.countByGroupId(groupId);
+
+        group.setAverageProgress(averageProgress);
+
+        groupRepository.save(group);
+
     }
 
  }
