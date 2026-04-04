@@ -63,4 +63,9 @@ public class StudentController {
         studentService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/analytics/risk")
+    public ResponseEntity<?> getRisk() {
+        return ResponseEntity.ok(studentService.getStudentsRisk());
+    }
 }

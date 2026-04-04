@@ -3,6 +3,7 @@ package com.nb.globalerp.training.sitebackendglobalerp.services;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.StudentPatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.StudentRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.StudentResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.StudentRiskResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.kafka.dto.EduParticipantCreateDto;
 import com.nb.globalerp.training.sitebackendglobalerp.exception.StudentAlreadyExistsException;
 import com.nb.globalerp.training.sitebackendglobalerp.mapper.StudentMapper;
@@ -120,5 +121,10 @@ public class StudentService {
                 .stream()
                 .map(studentMapper::toStudentResponse)
                 .toList();
+    }
+
+    public List<StudentRiskResponse> getStudentsRisk() {
+        var projections = studentRepository.getStudentsRisk();
+        return studentMapper.toStudentRiskResponseList(projections);
     }
 }
