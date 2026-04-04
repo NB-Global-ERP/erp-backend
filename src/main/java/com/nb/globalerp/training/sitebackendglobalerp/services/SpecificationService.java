@@ -2,6 +2,7 @@ package com.nb.globalerp.training.sitebackendglobalerp.services;
 
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.SpecificationPatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.SpecificationRequest;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.GroupResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.SpecificationResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.mapper.SpecificationMapper;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Company;
@@ -14,6 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -22,6 +26,14 @@ public class SpecificationService {
     private final SpecificationRepository specificationRepository;
     private final SpecificationMapper specificationMapper;
     private final CompanyRepository companyRepository;
+
+    @Transactional
+    public List<SpecificationResponse> findAll() {
+        return specificationRepository.findAll()
+                .stream()
+                .map(specificationMapper::toSpecificationResponse)
+                .collect(Collectors.toList());
+    }
 
     @Transactional
     public SpecificationResponse findById(int id) {
