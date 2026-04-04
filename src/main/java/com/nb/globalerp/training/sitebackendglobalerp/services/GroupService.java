@@ -92,6 +92,7 @@ public class GroupService {
         Student student = studentRepository.findById(studentId)
             .orElseThrow(() -> new EntityNotFoundException("Student not found with id: " + studentId));
 
+        student.getGroups().add(group);
         group.getStudents().add(student);
     }
 
