@@ -4,6 +4,7 @@ import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.Specificat
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.SpecificationRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.GroupResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.SpecificationResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.exception.SpecificationAlreadyExistsException;
 import com.nb.globalerp.training.sitebackendglobalerp.mapper.SpecificationMapper;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Company;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Specification;
@@ -49,6 +50,10 @@ public class SpecificationService {
 
         Specification specification = specificationMapper.toSpecificationEntity(request);
         specification.setCompany(company);
+
+        if(specificationRepository.findByNumber(request.number()).isPresent()){
+            throw new SpecificationAlreadyExistsException("Спецификация с номером: %d уже создана".formatted(request.number()));
+        }
 
         return specificationRepository.save(specification).getId();
     }
