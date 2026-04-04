@@ -20,6 +20,7 @@ public class EduCourseXmlConsumer {
     private final XmlMapper xmlMapper = new XmlMapper();
 
     @KafkaListener(
+        containerFactory = "crackHashTaskResultKafkaListenerContainerFactory",
         topics = "edu_course_factory_xml_consumer_topic",
         groupId = "edu_course_factory_xml_consumer_group"
     )
