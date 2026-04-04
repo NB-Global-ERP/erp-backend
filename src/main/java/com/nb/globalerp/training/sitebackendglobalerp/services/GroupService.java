@@ -47,8 +47,6 @@ public class GroupService {
 
     @Transactional
     public List<GroupResponse> findAll() {
-
-
         return groupRepository.findAll()
                 .stream()
                 .map(group -> {
