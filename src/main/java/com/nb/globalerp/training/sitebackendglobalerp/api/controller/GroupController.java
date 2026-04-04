@@ -2,8 +2,10 @@ package com.nb.globalerp.training.sitebackendglobalerp.api.controller;
 
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupPatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupRequest;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CourseCompletionStatusResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CreateResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.GroupResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.SimpleStatsResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.services.GroupService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -21,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @Validated
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/groups")
@@ -29,10 +33,31 @@ public class GroupController {
 
     private final GroupService groupService;
 
+    @GetMapping("/list")
+    public ResponseEntity<List<GroupResponse>> getList() {
+        List<GroupResponse> response = groupService.findAll();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @GetMapping
     public ResponseEntity<GroupResponse> getById(@RequestParam @Positive int id) {
         var response = groupService.findById(id);
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/analytics/rowsNum")
+    public Long rowsNum(){
+        return groupService.getGroupNum();
+    }
+
+    @GetMapping("/analytics/basicStats/pricePerPerson")
+    public SimpleStatsResponse pricePerPersonStats(){
+        return groupService.getPricePerPersonStats();
+    }
+
+    @GetMapping("/analytics/basicStats/timeStats")
+    public SimpleStatsResponse timeStats(){
+        return groupService.getTimeStats();
     }
 
     @PostMapping

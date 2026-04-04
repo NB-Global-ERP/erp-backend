@@ -3,6 +3,7 @@ package com.nb.globalerp.training.sitebackendglobalerp.api.controller;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.SpecificationPatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.SpecificationRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CreateResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.GroupResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.SpecificationResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.services.SpecificationService;
 import jakarta.validation.Valid;
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @Validated
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/specifications")
@@ -27,6 +30,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class SpecificationController {
 
     private final SpecificationService specificationService;
+
+    @GetMapping("/list")
+    public ResponseEntity<List<SpecificationResponse>> getList() {
+        List<SpecificationResponse> response = specificationService.findAll();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 
     @GetMapping
     public ResponseEntity<SpecificationResponse> getById(@RequestParam @Positive int id) {

@@ -4,7 +4,7 @@ import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.CoursePatc
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.CourseRequest;
 
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CourseResponse;
-import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CourseSimpleStatsResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.SimpleStatsResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CreateResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.services.CourseService;
 import jakarta.validation.Valid;
@@ -44,8 +44,13 @@ public class CourseController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/analytics/basicStats")
-    public CourseSimpleStatsResponse basicStats(){
+    @GetMapping("/analytics/rowsNum")
+    public Long rowsNum(){
+        return courseService.getCourseNum();
+    }
+
+    @GetMapping("/analytics/basicStats/dayDuration")
+    public SimpleStatsResponse basicStats(){
         return courseService.getBasicStats();
     }
 

@@ -11,7 +11,6 @@ import java.util.List;
 public interface CourseRepository extends JpaRepository<Course, Integer> {
     @Query("""
         SELECT
-            COUNT(c),
             SUM(c.durationInDays),
             AVG(c.durationInDays),
             MIN(c.durationInDays),

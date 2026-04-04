@@ -3,6 +3,7 @@ package com.nb.globalerp.training.sitebackendglobalerp.mapper;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.CourseRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.StudentRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CourseResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.SimpleStatsResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.StudentResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Course;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Student;
