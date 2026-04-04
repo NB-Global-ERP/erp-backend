@@ -25,18 +25,16 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
-#  kafka-ui:
-#    image: provectuslabs/kafka-ui:latest
-#    container_name: kafka-cluster-ui
-#    ports:
-#      - "9095:8080"
-#    environment:
-#      KAFKA_CLUSTERS_0_NAME: local
-#      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: crackhash_kafka:9092
-#    depends_on:
-#      - crackhash_kafka
-#    networks:
-#      - crackhash-net
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-cluster-ui
+    ports:
+      - "9095:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: erp_kafka:9092
+    depends_on:
+      - erp_kafka
 
   erp_db_postgres:
     image: 'postgres:16.4'
