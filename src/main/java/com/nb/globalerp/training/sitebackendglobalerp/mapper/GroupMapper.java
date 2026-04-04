@@ -16,6 +16,7 @@ public interface GroupMapper {
 
     Group toGroupEntity(GroupRequest request);
 
+
     @Mapping(target = "courseCompletion", source = "courseCompletionStatus.name")
     @Mapping(target = "specificationId", source = "specification.id")
     @Mapping(target = "courseId", source = "course.id")

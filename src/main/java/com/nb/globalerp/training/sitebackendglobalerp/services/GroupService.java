@@ -47,8 +47,6 @@ public class GroupService {
 
     @Transactional
     public List<GroupResponse> findAll() {
-
-
         return groupRepository.findAll()
                 .stream()
                 .map(group -> {
@@ -71,7 +69,6 @@ public class GroupService {
         GroupResponse groupResponse = groupMapper.toGroupResponse(group);
         groupResponse.setParticipantCount(participantCount);
         groupResponse.setGroupPrice(new BigDecimal(participantCount).multiply(group.getPricePerPerson()));
-//        groupResponse.setCourseCompletion(group.getCourseCompletionStatus().getName());
 
         return groupResponse;
     }
@@ -105,7 +102,6 @@ public class GroupService {
         long participantCount = groupMemberRepository.countByGroupId(id);
 
         GroupResponse groupResponse = groupMapper.toGroupResponse(groupRepository.save(group));
-//        groupResponse.setCourseCompletion(group.getCourseCompletionStatus().getName());
         groupResponse.setParticipantCount(participantCount);
         groupResponse.setGroupPrice(new BigDecimal(participantCount).multiply(group.getPricePerPerson()));
 
@@ -134,6 +130,7 @@ public class GroupService {
                 .build();
 
             GroupMember savedGroupMember = groupMemberRepository.save(groupMember);
+            countAverageProgress(groupId);
             idsMembers.add(savedGroupMember.getId());
         }
 
@@ -162,5 +159,17 @@ public class GroupService {
             return simpleStatsMapper.emptyStats();
         }
         return simpleStatsMapper.toSimpleStats(result.getFirst());
+    }
+
+    private void countAverageProgress(Integer groupId){
+        Group group = groupRepository.findById(groupId).orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + groupId));
+
+        float averageProgress = groupMemberRepository.sumPercentByGroupId(groupId)
+                / groupMemberRepository.countByGroupId(groupId);
+
+        group.setAverageProgress(averageProgress);
+
+        groupRepository.save(group);
+
     }
 }
