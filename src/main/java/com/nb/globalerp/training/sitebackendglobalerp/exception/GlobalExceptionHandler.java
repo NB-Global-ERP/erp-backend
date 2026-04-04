@@ -17,6 +17,11 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.CONFLICT, "Student Already Exists", ex);
     }
 
+    @ExceptionHandler(SpecificationAlreadyExistsException.class)
+    public ResponseEntity<ApiError> handleSpecificationAlreadyExists(SpecificationAlreadyExistsException ex){
+        return buildErrorResponse(HttpStatus.CONFLICT, "Specification Already Exists", ex);
+    }
+
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ApiError> handleEntityNotFound(EntityNotFoundException ex) {
         return buildErrorResponse(HttpStatus.NOT_FOUND, "Entity Not Found", ex);
