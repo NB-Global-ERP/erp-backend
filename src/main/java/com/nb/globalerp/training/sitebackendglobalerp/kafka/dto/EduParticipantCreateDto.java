@@ -1,32 +1,32 @@
 package com.nb.globalerp.training.sitebackendglobalerp.kafka.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.xml.bind.annotation.XmlElement;
 
 @JacksonXmlRootElement(localName = "Edu_Participant")
 public record EduParticipantCreateDto(
-    @XmlElement(name = "id")
+    @JsonProperty("id")
     int id,
 
-    @XmlElement(name = "sCode")
+    @JsonProperty("sCode")
     String code,
 
-    @XmlElement(name = "sLastName")
+    @JsonProperty("sLastName")
     String lastName,
 
-    @XmlElement(name = "sMiddleName")
+    @JsonProperty("sMiddleName")
     String middleName,
 
-    @XmlElement(name = "sFirstName")
+    @JsonProperty("sFirstName")
     String firstName,
 
-    @XmlElement(name = "sFIO")
+    @JsonProperty("sFIO")
     String fio,
 
-    @XmlElement(name = "idOrganization")
+    @JsonProperty("idOrganization")
     String companyCode,
 
-    @XmlElement(name = "idOrganizationHL")
+    @JsonProperty("idOrganizationHL")
     String companyName
 ) {}

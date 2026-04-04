@@ -17,5 +17,6 @@ public interface StudentMapper {
 
     Student toStudentEntity(StudentRequest request);
 
+    @Mapping(target = "id", ignore = true)
     Student toStudentEntity(EduParticipantCreateDto request);
 }

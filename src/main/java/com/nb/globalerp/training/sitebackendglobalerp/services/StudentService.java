@@ -58,6 +58,7 @@ public class StudentService {
 
     public int createFromExternalSystem(EduParticipantCreateDto eduParticipantCreateDto) {
         Student student = studentMapper.toStudentEntity(eduParticipantCreateDto);
+        student.setEmail("default" + eduParticipantCreateDto.id() + "email@external.ru");
         student.setExternalId(eduParticipantCreateDto.id());
         student.setExternalCode(eduParticipantCreateDto.code());
 

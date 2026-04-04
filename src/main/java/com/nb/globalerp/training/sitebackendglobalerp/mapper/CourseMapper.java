@@ -3,10 +3,9 @@ package com.nb.globalerp.training.sitebackendglobalerp.mapper;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.CourseRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CourseResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.kafka.dto.EduCourseCreateDto;
-import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.SimpleStatsResponse;
-import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.StudentResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Course;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
@@ -23,5 +22,6 @@ public interface CourseMapper {
 
     Course toCourseEntity(CourseRequest request);
 
+    @Mapping(target = "id", ignore = true)
     Course toCourseEntity(EduCourseCreateDto request);
 }

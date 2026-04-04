@@ -11,8 +11,8 @@ create table courses (
   description varchar(1024) not null,
   duration_in_days int not null,
   price_per_person decimal(12, 2) not null,
-  external_id int,
-  external_code varchar(255) not null
+  external_id int unique,
+  external_code varchar(255) not null unique
 );
 
 create table specifications (
@@ -52,7 +52,8 @@ create table students (
     company_id int not null references companies(id),
     email varchar(255) not null unique,
     external_id int,
-    external_code varchar(255)
+    external_code varchar(255),
+    unique (external_id, external_code)
 );
 
 create table group_members (

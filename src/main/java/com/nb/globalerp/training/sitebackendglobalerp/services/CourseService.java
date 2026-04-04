@@ -46,6 +46,7 @@ public class CourseService {
 
     public int createFromExternalSystem(EduCourseCreateDto eduCourseCreateDto) {
         Course course = courseMapper.toCourseEntity(eduCourseCreateDto);
+        course.setName(eduCourseCreateDto.course());
         course.setExternalId(eduCourseCreateDto.id());
         course.setExternalCode(eduCourseCreateDto.code());
         return courseRepository.save(course).getId();
