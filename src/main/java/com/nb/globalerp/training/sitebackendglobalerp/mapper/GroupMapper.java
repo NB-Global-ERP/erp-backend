@@ -22,5 +22,6 @@ public interface GroupMapper {
     @Mapping(target = "courseId", source = "course.id")
     GroupResponse toGroupResponse(Group group);
 
+    @Mapping(target = "dateEnd", ignore = true)
     void updateGroupEntity(@MappingTarget Group group, GroupPatchRequest request);
 }

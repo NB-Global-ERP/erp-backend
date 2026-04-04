@@ -19,6 +19,7 @@ import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.GroupMemb
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.GroupRepository;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.SpecificationRepository;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.StudentRepository;
+import com.nb.globalerp.training.sitebackendglobalerp.utils.WorkCalendarService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +27,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -84,10 +87,15 @@ public class GroupService {
         Specification specification = specificationRepository.findById(request.specificationId())
             .orElseThrow(() -> new EntityNotFoundException("Specification not found with id: " + request.specificationId()));
 
-        Group group = groupMapper.toGroupEntity(request);
+        Group group = new Group();
+        group.setDateBegin(request.dateBegin());
+        group.setDateEnd(WorkCalendarService.calculateEndDate(request.dateBegin(), course.getDurationInDays()));
+
         group.setCourse(course);
         group.setCourseCompletionStatus(courseCompletionStatus);
         group.setSpecification(specification);
+
+        group.setPricePerPerson(course.getPricePerPerson());
 
         return groupRepository.save(group).getId();
     }
@@ -97,7 +105,49 @@ public class GroupService {
         Group group = groupRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + id));
 
-        groupMapper.updateGroupEntity(group, request);
+        if(request.dateBegin() != null && !Objects.equals(request.dateBegin(), group.getDateBegin())) {
+            group.setDateBegin(request.dateBegin());
+            group.setDateEnd(WorkCalendarService.calculateEndDate(group.getDateBegin(), group.getCourse().getDurationInDays()));
+        }
+        if(request.courseCompletionId() != null && !Objects.equals(request.courseCompletionId(), group.getCourseCompletionStatus().getId())){
+            group.setCourseCompletionStatus(courseCompletionStatusRepository.findById(request.courseCompletionId())
+                    .orElseThrow(() -> new EntityNotFoundException("CourseCompletionId not found with id: " + request.courseCompletionId())));
+        }
+
+        if(request.specificationId() != null && !Objects.equals(request.specificationId(), group.getSpecification().getId())){
+            group.setSpecification(specificationRepository.findById(request.specificationId())
+                    .orElseThrow(() -> new EntityNotFoundException("Specification not found with id: " + request.specificationId())));
+
+        }
+
+        if(request.courseId() != null && !Objects.equals(request.courseId(), group.getCourse().getId())){
+            group.setCourse(courseRepository.findById(request.courseId())
+                    .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + request.courseId())));
+
+            Specification specification = group.getSpecification();
+
+            BigDecimal studentsCount = (BigDecimal)groupMemberRepository.findGroupMemberByGroupId(id);
+
+            BigDecimal total_amount_excluding_vat = specification.getTotalAmountExcludingVat().subtract(
+                    group.getPricePerPerson().multiply(studentsCount));
+
+            total_amount_excluding_vat.add(group.getCourse().getPricePerPerson().multiply(studentsCount));
+
+            BigDecimal percent = new BigDecimal("22");
+            BigDecimal vat_amount_22_percent = total_amount_excluding_vat
+                    .multiply(percent)
+                    .divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP);
+
+            BigDecimal totalAmountIncludingVat = total_amount_excluding_vat.add(vat_amount_22_percent);
+
+            specification.setTotalAmountExcludingVat(total_amount_excluding_vat);
+            specification.setVatAmount22Percent(vat_amount_22_percent);
+            specification.setTotalAmountIncludingVat(totalAmountIncludingVat);
+
+            specificationRepository.save(specification);
+
+            group.setPricePerPerson(group.getCourse().getPricePerPerson());
+        }
 
         long participantCount = groupMemberRepository.countByGroupId(id);
 

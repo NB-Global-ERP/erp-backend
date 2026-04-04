@@ -18,14 +18,14 @@ public record GroupRequest(
         @NotNull(message = "Start date is required")
         Instant dateBegin,
 
-        @Schema(example = "2025-10-01T18:00:00Z")
-        @NotNull(message = "End date is required")
-        Instant dateEnd,
+//        @Schema(example = "2025-10-01T18:00:00Z")
+//        @NotNull(message = "End date is required")
+//        Instant dateEnd,
 
-        @Schema(example = "15000.00")
-        @NotNull(message = "Price per person is required")
-        @DecimalMin(value = "0.00", message = "Price must be non-negative")
-        BigDecimal pricePerPerson,
+//        @Schema(example = "15000.00")
+//        @NotNull(message = "Price per person is required")
+//        @DecimalMin(value = "0.00", message = "Price must be non-negative")
+//        BigDecimal pricePerPerson,
 
         @Schema(example = "1")
         @NotNull(message = "Course completion ID is required")

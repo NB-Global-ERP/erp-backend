@@ -16,20 +16,20 @@ public record GroupPatchRequest(
         @Schema(example = "2025-09-01T09:00:00Z")
         Instant dateBegin,
 
-        @Schema(example = "2025-10-01T18:00:00Z")
-        Instant dateEnd,
+//        @Schema(example = "2025-10-01T18:00:00Z")
+//        Instant dateEnd,
 
-        @Schema(example = "15000.00")
-        @DecimalMin(value = "0.00", message = "Price must be non-negative")
-        BigDecimal pricePerPerson,
+//        @Schema(example = "15000.00")
+//        @DecimalMin(value = "0.00", message = "Price must be non-negative")
+//        BigDecimal pricePerPerson,
 
-        @Schema(example = "8")
-        @PositiveOrZero(message = "Participant count must be non-negative")
-        Integer participantCount,
+//        @Schema(example = "8")
+//        @PositiveOrZero(message = "Participant count must be non-negative")
+//        Integer participantCount,
 
-        @Schema(example = "120000.00")
-        @DecimalMin(value = "0.00", message = "Price must be non-negative")
-        BigDecimal groupPrice,
+//        @Schema(example = "120000.00")
+//        @DecimalMin(value = "0.00", message = "Price must be non-negative")
+//        BigDecimal groupPrice,
 
         @Schema(example = "1")
         @Positive(message = "Course completion ID must be positive")
