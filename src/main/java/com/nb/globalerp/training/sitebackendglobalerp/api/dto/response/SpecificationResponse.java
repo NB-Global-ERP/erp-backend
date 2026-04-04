@@ -5,7 +5,7 @@ import java.time.Instant;
 
 public record SpecificationResponse(
         int id,
-        Instant date,
+        Instant datetime,
         int number,
         Integer companyId,
         BigDecimal totalAmountExcludingVat,

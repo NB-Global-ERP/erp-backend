@@ -4,11 +4,7 @@ import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.Specificat
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.SpecificationRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.SpecificationResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Specification;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingConstants;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 
 @Mapper(
     componentModel = MappingConstants.ComponentModel.SPRING,
@@ -18,6 +14,7 @@ import org.mapstruct.ReportingPolicy;
 )
 public interface SpecificationMapper {
 
+    @Mapping(target = "companyId", source = "company.id")
     SpecificationResponse toSpecificationResponse(Specification specification);
 
     Specification toSpecificationEntity(SpecificationRequest request);

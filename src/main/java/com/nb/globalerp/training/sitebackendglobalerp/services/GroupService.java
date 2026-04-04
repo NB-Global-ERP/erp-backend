@@ -44,9 +44,17 @@ public class GroupService {
 
     @Transactional
     public List<GroupResponse> findAll() {
+
+
         return groupRepository.findAll()
                 .stream()
-                .map(groupMapper::toGroupResponse)
+                .map(group -> {
+                    GroupResponse dto = groupMapper.toGroupResponse(group);
+                    long participantCount = groupMemberRepository.countByGroupId(dto.getId());
+                    dto.setParticipantCount(participantCount);
+                    dto.setGroupPrice(new BigDecimal(participantCount).multiply(dto.getPricePerPerson()));
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -60,7 +68,7 @@ public class GroupService {
         GroupResponse groupResponse = groupMapper.toGroupResponse(group);
         groupResponse.setParticipantCount(participantCount);
         groupResponse.setGroupPrice(new BigDecimal(participantCount).multiply(group.getPricePerPerson()));
-        groupResponse.setCourseCompletion(group.getCourseCompletionStatus().getName());
+//        groupResponse.setCourseCompletion(group.getCourseCompletionStatus().getName());
 
         return groupResponse;
     }
@@ -91,8 +99,12 @@ public class GroupService {
 
         groupMapper.updateGroupEntity(group, request);
 
+        long participantCount = groupMemberRepository.countByGroupId(id);
+
         GroupResponse groupResponse = groupMapper.toGroupResponse(groupRepository.save(group));
-        groupResponse.setCourseCompletion(group.getCourseCompletionStatus().getName());
+//        groupResponse.setCourseCompletion(group.getCourseCompletionStatus().getName());
+        groupResponse.setParticipantCount(participantCount);
+        groupResponse.setGroupPrice(new BigDecimal(participantCount).multiply(group.getPricePerPerson()));
 
         return groupResponse;
     }

@@ -17,6 +17,7 @@ import java.util.List;
 )
 public interface StudentMapper {
 
+    @Mapping(target = "companyId", source = "company.id")
     StudentResponse toStudentResponse(Student student);
 
     Student toStudentEntity(StudentRequest request);
