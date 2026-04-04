@@ -1,20 +1,13 @@
 package com.nb.globalerp.training.sitebackendglobalerp.services;
 
-import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.CourseCompletionStatusPatchRequest;
-import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.CourseCompletionStatusRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.CoursePatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.CourseRequest;
-import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CourseCompletionStatusResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CourseResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CourseSimpleStatsResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.mapper.CourseMapper;
-import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Company;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Course;
-import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Student;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.CourseRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -77,7 +70,7 @@ public class CourseService {
                     .build();
         }
 
-        Object[] stats = result.get(0);
+        Object[] stats = result.getFirst();
 
         return CourseSimpleStatsResponse.builder()
                 .count(stats[0] != null ? ((Number) stats[0]).longValue() : 0L)
