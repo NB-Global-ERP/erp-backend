@@ -7,8 +7,9 @@ import org.mapstruct.*;
 
 @Mapper(
     componentModel = MappingConstants.ComponentModel.SPRING,
-    nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
-    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+    unmappedSourcePolicy = ReportingPolicy.IGNORE,
+    unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
 public interface CompanyMapper {
 

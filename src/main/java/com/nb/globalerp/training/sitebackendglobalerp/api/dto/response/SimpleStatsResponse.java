@@ -5,8 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class CourseSimpleStatsResponse {
-    Long count;
+public class SimpleStatsResponse {
     Long sum;
     Double avg;
     Integer min;

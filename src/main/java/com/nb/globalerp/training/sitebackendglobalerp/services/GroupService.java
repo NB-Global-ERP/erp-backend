@@ -3,7 +3,9 @@ package com.nb.globalerp.training.sitebackendglobalerp.services;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupPatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.GroupResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.SimpleStatsResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.mapper.GroupMapper;
+import com.nb.globalerp.training.sitebackendglobalerp.mapper.SimpleStatsMapper;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Course;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.CourseCompletionStatus;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Group;
@@ -22,6 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -36,6 +40,15 @@ public class GroupService {
     private final GroupMemberRepository groupMemberRepository;
 
     private final GroupMapper groupMapper;
+    private final SimpleStatsMapper simpleStatsMapper;
+
+    @Transactional
+    public List<GroupResponse> findAll() {
+        return groupRepository.findAll()
+                .stream()
+                .map(groupMapper::toGroupResponse)
+                .collect(Collectors.toList());
+    }
 
     @Transactional
     public GroupResponse findById(int id) {
@@ -98,5 +111,25 @@ public class GroupService {
 
     public void delete(int id) {
         groupRepository.deleteById(id);
+    }
+
+    public Long getGroupNum() {
+        return groupRepository.count();
+    }
+
+    public SimpleStatsResponse getPricePerPersonStats() {
+        List<Object[]> result = groupRepository.getPricePerPersonStats();
+        if (result.isEmpty()) {
+            return simpleStatsMapper.emptyStats();
+        }
+        return simpleStatsMapper.toSimpleStats(result.getFirst());
+    }
+
+    public SimpleStatsResponse getTimeStats() {
+        List<Object[]> result = groupRepository.getTimeStats();
+        if (result.isEmpty()) {
+            return simpleStatsMapper.emptyStats();
+        }
+        return simpleStatsMapper.toSimpleStats(result.getFirst());
     }
 }
