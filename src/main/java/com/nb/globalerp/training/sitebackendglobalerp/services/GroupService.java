@@ -1,5 +1,6 @@
 package com.nb.globalerp.training.sitebackendglobalerp.services;
 
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.AddStudentToGroupRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupPatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.GroupResponse;
@@ -9,6 +10,7 @@ import com.nb.globalerp.training.sitebackendglobalerp.mapper.SimpleStatsMapper;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Course;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.CourseCompletionStatus;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Group;
+import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.GroupMember;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Specification;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Student;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.CourseCompletionStatusRepository;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -110,15 +113,31 @@ public class GroupService {
     }
 
     @Transactional
-    public void addStudentToGroup(int groupId, int studentId) {
-        Group group = groupRepository.findById(groupId)
-            .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + groupId));
+    public List<Integer> addStudentToGroup(AddStudentToGroupRequest addStudentToGroupRequest) {
+        List<Integer> idsMembers = new ArrayList<>();
 
-        Student student = studentRepository.findById(studentId)
-            .orElseThrow(() -> new EntityNotFoundException("Student not found with id: " + studentId));
+        for (var studentAdditional : addStudentToGroupRequest.studentAdditionals()) {
+            int studentId = studentAdditional.studentId();
+            int groupId = studentAdditional.groupId();
+            float progress = studentAdditional.initialProgress();
 
-        student.getGroups().add(group);
-        group.getStudents().add(student);
+            Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + groupId));
+
+            Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new EntityNotFoundException("Student not found with id: " + studentId));
+
+            GroupMember groupMember = GroupMember.builder()
+                .student(student)
+                .group(group)
+                .completionPercent(progress)
+                .build();
+
+            GroupMember savedGroupMember = groupMemberRepository.save(groupMember);
+            idsMembers.add(savedGroupMember.getId());
+        }
+
+        return idsMembers;
     }
 
     public void delete(int id) {

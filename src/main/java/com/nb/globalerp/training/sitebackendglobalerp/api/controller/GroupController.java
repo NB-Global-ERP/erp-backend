@@ -1,8 +1,13 @@
 package com.nb.globalerp.training.sitebackendglobalerp.api.controller;
 
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.AddStudentToGroupRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupPatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupRequest;
-import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.*;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.AddStudentToGroupResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CountResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CreateResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.GroupResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.SimpleStatsResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.services.GroupService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -75,12 +80,11 @@ public class GroupController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{groupId}/add/student/{studentId}")
-    public ResponseEntity<Void> addStudentToGroup(
-        @RequestParam @NotNull @Positive Integer groupId,
-        @RequestParam @NotNull @Positive Integer studentId
+    @PostMapping("/add/students")
+    public ResponseEntity<AddStudentToGroupResponse> addStudentToGroup(
+        @RequestBody @Valid @NotNull AddStudentToGroupRequest addStudentToGroupRequest
     ) {
-        groupService.addStudentToGroup(groupId, studentId);
-        return ResponseEntity.noContent().build();
+        var response = groupService.addStudentToGroup(addStudentToGroupRequest);
+        return ResponseEntity.ok().body(new AddStudentToGroupResponse(response));
     }
 }
