@@ -3,6 +3,7 @@ package com.nb.globalerp.training.sitebackendglobalerp.services;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.StudentPatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.StudentRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.StudentResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.exception.StudentAlreadyExistsException;
 import com.nb.globalerp.training.sitebackendglobalerp.mapper.StudentMapper;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Company;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Student;
@@ -36,6 +37,19 @@ public class StudentService {
 
         Student student = studentMapper.toStudentEntity(request);
         student.setCompany(company);
+        if(studentRepository.findByFirstNameAndLastNameAndMiddleNameAndCompany(
+                student.getFirstName(),
+                student.getLastName(),
+                student.getMiddleName(),
+                student.getCompany()
+        ).isPresent())
+        {
+            throw new StudentAlreadyExistsException("Обучающийся %s %s %s, работающий в компании %s, уже существует"
+                    .formatted(student.getLastName(),
+                            student.getFirstName(),
+                            student.getMiddleName(),
+                            company.getCompanyName()));
+        }
 
         return studentRepository.save(student).getId();
     }
@@ -55,6 +69,21 @@ public class StudentService {
             student.setCompany(company);
         }
         if (request.email() != null) student.setEmail(request.email());
+
+
+        if(studentRepository.findByFirstNameAndLastNameAndMiddleNameAndCompany(
+                student.getFirstName(),
+                student.getLastName(),
+                student.getMiddleName(),
+                student.getCompany()
+        ).isPresent())
+        {
+            throw new StudentAlreadyExistsException("Обучающийся %s %s %s, работающий в компании %s, уже существует"
+                    .formatted(student.getLastName(),
+                            student.getFirstName(),
+                            student.getMiddleName(),
+                            student.getCompany().getCompanyName()));
+        }
 
         Student answer = studentRepository.save(student);
         return studentMapper.toStudentResponse(answer);
