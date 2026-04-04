@@ -132,6 +132,7 @@ public class GroupService {
                 .build();
 
             GroupMember savedGroupMember = groupMemberRepository.save(groupMember);
+            countAverageProgress(groupId);
             idsMembers.add(savedGroupMember.getId());
         }
 
@@ -160,5 +161,17 @@ public class GroupService {
             return simpleStatsMapper.emptyStats();
         }
         return simpleStatsMapper.toSimpleStats(result.getFirst());
+    }
+
+    private void countAverageProgress(Integer groupId){
+        Group group = groupRepository.findById(groupId).orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + groupId));
+
+        float averageProgress = groupMemberRepository.sumPercentByGroupId(groupId)
+                / groupMemberRepository.countByGroupId(groupId);
+
+        group.setAverageProgress(averageProgress);
+
+        groupRepository.save(group);
+
     }
 }
