@@ -2,9 +2,13 @@ package com.nb.globalerp.training.sitebackendglobalerp.mapper;
 
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.StudentRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.StudentResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.StudentRiskResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.kafka.dto.EduParticipantCreateDto;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Student;
+import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.StudentRiskProjection;
 import org.mapstruct.*;
+
+import java.util.List;
 
 @Mapper(
     componentModel = MappingConstants.ComponentModel.SPRING,
@@ -18,4 +22,8 @@ public interface StudentMapper {
     Student toStudentEntity(StudentRequest request);
 
     Student toStudentEntity(EduParticipantCreateDto request);
+
+    StudentRiskResponse toStudentRiskResponse(StudentRiskProjection projection);
+
+    List<StudentRiskResponse> toStudentRiskResponseList(List<StudentRiskProjection> projections);
 }
