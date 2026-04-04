@@ -2,6 +2,7 @@ package com.nb.globalerp.training.sitebackendglobalerp.persistence.repo;
 
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Company;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Student;
+import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.StudentNotifyProjection;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.StudentRiskProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -52,4 +53,32 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
        JOIN students s ON gm.student_id = s.id;
     """, nativeQuery = true)
     List<StudentRiskProjection> getStudentsRisk();
+
+    @Query(value = """
+        SELECT\s
+            s.id AS studentId,
+            s.email AS email,
+            s.first_name AS firstName,
+            s.last_name AS lastName,
+        
+            g.id AS groupId,
+            g.date_end AS dateEnd,
+        
+            gm.completion_percent AS completionPercent
+        
+        FROM group_members gm
+        JOIN students s ON gm.student_id = s.id
+        JOIN groups g ON gm.group_id = g.id
+        
+        WHERE\s
+            -- курс ещё не завершён
+            g.course_completion_id = 2  -- IN_PROCESS
+        
+            -- до окончания осталось <= 1 день
+            AND g.date_end BETWEEN NOW() AND NOW() + INTERVAL '1 day'
+        
+            -- студент не завершил курс
+            AND gm.completion_percent < 1.0;
+    """, nativeQuery = true)
+    List<StudentNotifyProjection> getStudentsToNotify();
 }

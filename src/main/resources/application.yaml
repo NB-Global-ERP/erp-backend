@@ -11,6 +11,19 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  mail:
+    host: smtp.yandex.ru
+    port: 465
+    username: malinovskiy.denis@yandex.ru
+    password: password
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.ssl.enable: true
+      mail.smtp.socketFactory.class: javax.net.ssl.SSLSocketFactory
+      mail.smtp.connectiontimeout: 30000
+      mail.smtp.timeout: 30000
+      mail.smtp.writetimeout: 30000
+      mail.debug: true
 
 server:
   port: 8091
