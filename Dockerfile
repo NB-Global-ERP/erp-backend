@@ -17,6 +17,6 @@ WORKDIR /app
 
 COPY --from=build /erp-backend/build/libs/*.jar app.jar
 
-EXPOSE 8085
+EXPOSE 8091
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
