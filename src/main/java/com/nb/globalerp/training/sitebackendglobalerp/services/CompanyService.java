@@ -3,6 +3,7 @@ package com.nb.globalerp.training.sitebackendglobalerp.services;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.CompanyPatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.CompanyRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CompanyResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CompanyStudentsStatsResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CourseResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.mapper.CompanyMapper;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Company;
@@ -75,5 +76,10 @@ public class CompanyService {
 
     public long count() {
         return companyRepository.count();
+    }
+
+    public CompanyStudentsStatsResponse getCompanyStudentStats(Integer companyId) {
+        Object[] stats = companyRepository.getTrainingEfficiencyStats(companyId);
+        return companyMapper.toStudentsStats(stats);
     }
 }

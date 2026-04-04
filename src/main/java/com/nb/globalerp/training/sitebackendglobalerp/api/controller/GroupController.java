@@ -45,7 +45,7 @@ public class GroupController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/analytics/rowsNum")
+    @GetMapping("/analytics/count")
     public Long rowsNum(){
         return groupService.getGroupNum();
     }
