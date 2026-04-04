@@ -66,17 +66,17 @@ services:
         condition: service_started
         restart: true
 
-#  erp_service:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#    environment:
-#      PG_HOST: erp_db_postgres
-#      PG_PORT: 5432
-#      PG_USER: postgres
-#      PG_PASSWORD: postgres
-#      KAFKA_URL: erp_kafka:9092
-#    ports:
-#      - "8091:8091"
-#    depends_on:
-#      - erp_db_postgres
+  erp_service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      PG_HOST: erp_db_postgres
+      PG_PORT: 5432
+      PG_USER: postgres
+      PG_PASSWORD: postgres
+      KAFKA_URL: erp_kafka:9092
+    ports:
+      - "8091:8091"
+    depends_on:
+      - erp_db_postgres
