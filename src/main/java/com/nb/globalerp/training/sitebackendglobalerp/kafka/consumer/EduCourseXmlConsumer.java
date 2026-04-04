@@ -27,10 +27,13 @@ public class EduCourseXmlConsumer {
     private void consumeNewEntityFromXml(ConsumerRecords<String, String> consumerRecords) {
         for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
             String xmlValue = consumerRecord.value();
+            log.info("Consuming edu_course record: topic={}, partition={}, offset={}", consumerRecord.topic(), consumerRecord.partition(), consumerRecord.offset());
             try {
                 EduCourseCreateDto eduCourseCreateDto = xmlMapper.readValue(xmlValue, EduCourseCreateDto.class);
                 courseService.createFromExternalSystem(eduCourseCreateDto);
+                log.info("Successfully processed edu_course record: offset={}", consumerRecord.offset());
             } catch (Exception e) {
+                log.error("Failed to process edu_course record: offset={}, error={}", consumerRecord.offset(), e.getMessage(), e);
                 throw new RuntimeException(e);
             }
         }
