@@ -2,7 +2,11 @@ package com.nb.globalerp.training.sitebackendglobalerp;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
+@EnableConfigurationProperties
+@ConfigurationPropertiesScan
 @SpringBootApplication
 public class SitebackendGlobalErpApplication {
 
@@ -11,3 +15,4 @@ public class SitebackendGlobalErpApplication {
     }
 
 }
+

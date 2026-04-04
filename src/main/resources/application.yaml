@@ -13,4 +13,23 @@ spring:
         format_sql: true
 
 server:
-  port: 8091
+  port: 8080
+
+entity-factory:
+  kafka:
+    producer:
+      config:
+        bootstrap-servers: ${KAFKA_URL:localhost:9092}
+        key-serializer: org.apache.kafka.common.serialization.StringSerializer
+        value-serializer: org.apache.kafka.common.serialization.StringSerializer
+        retries: 0
+        acks: all
+      topic: crackhash_task_request_topic
+    consumer:
+      config:
+        bootstrap-servers: ${KAFKA_URL:localhost:9092}
+        key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        group-id: crackhash_task_result_group_id
+        auto-offset-reset: earliest
+      topic: crackhash_task_result_topic

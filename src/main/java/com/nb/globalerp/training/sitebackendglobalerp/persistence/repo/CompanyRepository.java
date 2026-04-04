@@ -6,9 +6,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface CompanyRepository extends JpaRepository<Company, Integer> {
-
     @Query(value = """
         SELECT
             -- 1. Кол-во уникальных сотрудников в обучении
@@ -32,4 +33,6 @@ public interface CompanyRepository extends JpaRepository<Company, Integer> {
         WHERE s.company_id = :companyId
     """, nativeQuery = true)
     Object[] getTrainingEfficiencyStats(@Param("companyId") Integer companyId);
+
+    Optional<Company> findByCompanyCode(String companyCode);
 }

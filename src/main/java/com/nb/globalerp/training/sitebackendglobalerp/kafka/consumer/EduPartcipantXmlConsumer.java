@@ -1,0 +1,37 @@
+package com.nb.globalerp.training.sitebackendglobalerp.kafka.consumer;
+
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.nb.globalerp.training.sitebackendglobalerp.kafka.dto.EduParticipantCreateDto;
+import com.nb.globalerp.training.sitebackendglobalerp.services.StudentService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Component;
+
+@Slf4j
+@RequiredArgsConstructor
+@Component
+public class EduPartcipantXmlConsumer {
+
+    private final StudentService studentService;
+
+    private final XmlMapper xmlMapper = new XmlMapper();
+
+    @KafkaListener(
+        topics = "edu_participant_factory_xml_consumer_topic",
+        groupId = "edu_participant_factory_xml_consumer_group"
+    )
+    private void consumeNewEntityFromXml(ConsumerRecords<String, String> consumerRecords) {
+        for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
+            String xmlValue = consumerRecord.value();
+            try {
+                EduParticipantCreateDto eduParticipantCreateDto = xmlMapper.readValue(xmlValue, EduParticipantCreateDto.class);
+                studentService.createFromExternalSystem(eduParticipantCreateDto);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+}

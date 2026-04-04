@@ -38,4 +38,10 @@ public class Course {
 
     @Column(name = "price_per_person")
     private BigDecimal pricePerPerson;
+
+    @Column(name = "external_id")
+    private Integer externalId;
+
+    @Column(name = "external_code")
+    private String externalCode;
 }

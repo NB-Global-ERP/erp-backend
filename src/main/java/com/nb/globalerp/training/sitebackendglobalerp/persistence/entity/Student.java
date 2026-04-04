@@ -48,6 +48,12 @@ public class Student {
     @Column
     private String email;
 
+    @Column(name = "external_id")
+    private int externalId;
+
+    @Column(name = "external_code")
+    private String externalCode;
+
     @ManyToMany
     @JoinTable(
         name = "group_members",
