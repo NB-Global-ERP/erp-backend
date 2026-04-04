@@ -2,9 +2,9 @@ spring:
   application:
     name: sitebackend-global-erp
   datasource:
-    url: jdbc:postgresql://${PG_HOST}:${PG_PORT}/${ERP_PG_DATABASE}
-    username: ${PG_USER}
-    password: ${PG_PASSWORD}
+    url: jdbc:postgresql://${PG_HOST:localhost}:${PG_PORT:5432}/${ERP_PG_DATABASE:erp_database}
+    username: ${PG_USER:postgres}
+    password: ${PG_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: false
@@ -19,7 +19,7 @@ entity-factory:
   kafka:
     producer:
       config:
-        bootstrap-servers: ${KAFKA_URL:localhost:9092}
+        bootstrap-servers: ${KAFKA_URL:localhost:9093}
         key-serializer: org.apache.kafka.common.serialization.StringSerializer
         value-serializer: org.apache.kafka.common.serialization.StringSerializer
         retries: 0
@@ -27,7 +27,7 @@ entity-factory:
       topic: crackhash_task_request_topic
     consumer:
       config:
-        bootstrap-servers: ${KAFKA_URL:localhost:9092}
+        bootstrap-servers: ${KAFKA_URL:localhost:9093}
         key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
         value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
         group-id: crackhash_task_result_group_id

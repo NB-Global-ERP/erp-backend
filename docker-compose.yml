@@ -41,7 +41,6 @@ services:
   erp_db_postgres:
     image: 'postgres:16.4'
     container_name: erp-postgres
-    hostname: ${ERP_PG_HOST}
     env_file:
       - .env
     environment:
@@ -50,15 +49,13 @@ services:
       POSTGRES_DB: ${ERP_PG_DATABASE}
     ports:
       - "${ERP_PG_PORT}:5432"
-    networks:
-      - erp_network
 
   erp_flyway:
-    container_name: ${CONTAINER_FLYWAY_NAME}
+    container_name: erp-flyway
     env_file:
       - .env
     environment:
-      FLYWAY_URL: jdbc:postgresql://${ERP_PG_HOST}:${ERP_PG_PORT}/${ERP_PG_DATABASE}
+      FLYWAY_URL: jdbc:postgresql://erp_db_postgres:5432/${ERP_PG_DATABASE}
       FLYWAY_USER: ${ERP_PG_USER}
       FLYWAY_PASSWORD: ${ERP_PG_PASSWORD}
     command:
@@ -70,21 +67,17 @@ services:
       erp_db_postgres:
         condition: service_started
         restart: true
-    networks:
-      - erp_network
 
   erp_service:
     build:
       context: .
       dockerfile: Dockerfile
-    hostname: ${HOSTNAME_BACKEND}
-    env_file:
-      - .env
     environment:
-      PG_HOST: ${ERP_PG_HOST}
-      PG_PORT: ${ERP_PG_PORT}
-      PG_USER: ${ERP_PG_USER}
-      PG_PASSWORD: ${ERP_PG_PASSWORD}
+      PG_HOST: erp_db_postgres
+      PG_PORT: 5432
+      PG_USER: postgres
+      PG_PASSWORD: postgres
+      KAFKA_URL: erp_kafka:9092
     ports:
       - "8091:8091"
     depends_on:
