@@ -44,8 +44,8 @@ public class CompanyController {
     }
 
     @GetMapping("/analytics/companyStudentStats")
-    public CompanyStudentsStatsResponse companyStudentStats(@RequestParam @Positive Integer id){
-        return companyService.getCompanyStudentStats(id);
+    public CompanyStudentsStatsResponse companyStudentStats(@RequestParam @Positive Integer id) {
+        return companyService.getTrainingEfficiencyStats(id);
     }
 
     @GetMapping("/count")

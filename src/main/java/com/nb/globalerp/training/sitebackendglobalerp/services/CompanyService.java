@@ -78,8 +78,15 @@ public class CompanyService {
         return companyRepository.count();
     }
 
-    public CompanyStudentsStatsResponse getCompanyStudentStats(Integer companyId) {
-        Object[] stats = companyRepository.getTrainingEfficiencyStats(companyId);
-        return companyMapper.toStudentsStats(stats);
+    public CompanyStudentsStatsResponse getTrainingEfficiencyStats(Integer companyId) {
+
+        if (!companyRepository.existsById(companyId)) {
+            throw new EntityNotFoundException("Company not found with id=" + companyId);
+        }
+        List<Object[]> result = companyRepository.getTrainingEfficiencyStats(companyId);
+        if (result.isEmpty() || result.getFirst() == null) {
+            return companyMapper.emptyStats();
+        }
+        return companyMapper.toStudentsStats(result.getFirst());
     }
 }

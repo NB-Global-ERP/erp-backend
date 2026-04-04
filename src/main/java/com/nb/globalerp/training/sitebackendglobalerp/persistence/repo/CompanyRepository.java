@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -32,7 +33,9 @@ public interface CompanyRepository extends JpaRepository<Company, Integer> {
         JOIN course_completion_statuses cs ON cs.id = g.course_completion_id
         WHERE s.company_id = :companyId
     """, nativeQuery = true)
-    Object[] getTrainingEfficiencyStats(@Param("companyId") Integer companyId);
+    List<Object[]> getTrainingEfficiencyStats(@Param("companyId") Integer companyId);
 
     Optional<Company> findByCompanyCode(String companyCode);
+
+    boolean existsById(Integer id);
 }
