@@ -1,19 +1,25 @@
 package com.nb.globalerp.training.sitebackendglobalerp.mapper;
 
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.CourseRequest;
-import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.StudentRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CourseResponse;
-import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.StudentResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.kafka.dto.EduCourseCreateDto;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Course;
-import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Student;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring")
+@Mapper(
+    componentModel = MappingConstants.ComponentModel.SPRING,
+    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+    unmappedSourcePolicy = ReportingPolicy.IGNORE,
+    unmappedTargetPolicy = ReportingPolicy.IGNORE
+)
 public interface CourseMapper {
-    @Mapping(source = "course.id", target = "id")
-    CourseResponse toResponse(Course course);
 
-    @Mapping(target = "id", ignore = true)
-    Course toEntity(CourseRequest request);
+    CourseResponse toCourseResponse(Course course);
+
+    Course toCourseEntity(CourseRequest request);
+
+    Course toCourseEntity(EduCourseCreateDto request);
 }

@@ -5,9 +5,11 @@ import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CompanyRe
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Company;
 import org.mapstruct.*;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
-        nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(
+    componentModel = MappingConstants.ComponentModel.SPRING,
+    nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
+    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+)
 public interface CompanyMapper {
 
     CompanyResponse toResponse(Company company);

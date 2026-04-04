@@ -3,6 +3,7 @@ package com.nb.globalerp.training.sitebackendglobalerp.services;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.StudentPatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.StudentRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.StudentResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.kafka.dto.EduParticipantCreateDto;
 import com.nb.globalerp.training.sitebackendglobalerp.mapper.StudentMapper;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Company;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Student;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -40,6 +42,26 @@ public class StudentService {
         return studentRepository.save(student).getId();
     }
 
+    public int createFromExternalSystem(EduParticipantCreateDto eduParticipantCreateDto) {
+        Student student = studentMapper.toStudentEntity(eduParticipantCreateDto);
+        student.setExternalId(eduParticipantCreateDto.id());
+        student.setExternalCode(eduParticipantCreateDto.code());
+
+        Optional<Company> optionalCompany = companyRepository.findByCompanyCode(eduParticipantCreateDto.companyCode());
+
+        Company company = optionalCompany.orElse(
+            Company.builder()
+                .companyCode(eduParticipantCreateDto.companyCode())
+                .companyName(eduParticipantCreateDto.companyName())
+                .externalCompanyCode(eduParticipantCreateDto.companyCode())
+                .build()
+        );
+        Company savedCompany = companyRepository.save(company);
+        student.setCompany(savedCompany);
+
+        return studentRepository.save(student).getId();
+    }
+
     public StudentResponse update(int id, StudentPatchRequest request) {
 
         Student student = studentRepository.findById(id)
@@ -61,12 +83,7 @@ public class StudentService {
     }
 
     public void delete(Integer id) {
-        try{
-            studentRepository.deleteById(id);
-        } catch (Exception ignored) {
-
-        }
-
+        studentRepository.deleteById(id);
     }
 
     public List<StudentResponse> getAll(){

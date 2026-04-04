@@ -4,6 +4,7 @@ import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.CoursePatc
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.CourseRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CourseResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CourseSimpleStatsResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.kafka.dto.EduCourseCreateDto;
 import com.nb.globalerp.training.sitebackendglobalerp.mapper.CourseMapper;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Course;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.CourseRepository;
@@ -12,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,18 +27,25 @@ public class CourseService {
     public List<CourseResponse> findAll() {
         return courseRepository.findAll()
                 .stream()
-                .map(courseMapper::toResponse)
+                .map(courseMapper::toCourseResponse)
                 .collect(Collectors.toList());
     }
 
     public CourseResponse findById(int id) {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Course not found with id: " + id));
-        return courseMapper.toResponse(course);
+        return courseMapper.toCourseResponse(course);
     }
 
     public int create(CourseRequest request) {
-        Course course = courseMapper.toEntity(request);
+        Course course = courseMapper.toCourseEntity(request);
+        return courseRepository.save(course).getId();
+    }
+
+    public int createFromExternalSystem(EduCourseCreateDto eduCourseCreateDto) {
+        Course course = courseMapper.toCourseEntity(eduCourseCreateDto);
+        course.setExternalId(eduCourseCreateDto.id());
+        course.setExternalCode(eduCourseCreateDto.code());
         return courseRepository.save(course).getId();
     }
 
@@ -51,7 +58,7 @@ public class CourseService {
         if (request.durationInDays() != null) course.setDurationInDays(request.durationInDays());
         if (request.pricePerPerson() != null) course.setPricePerPerson(request.pricePerPerson());
 
-        return courseMapper.toResponse(courseRepository.save(course));
+        return courseMapper.toCourseResponse(courseRepository.save(course));
     }
 
     public void delete(int id) {courseRepository.deleteById(id);

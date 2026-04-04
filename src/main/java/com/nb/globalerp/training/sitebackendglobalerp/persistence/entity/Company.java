@@ -30,4 +30,7 @@ public class Company {
 
     @Column(name = "company_name")
     private String companyName;
+
+    @Column(name = "external_company_code")
+    private String externalCompanyCode;
 }
