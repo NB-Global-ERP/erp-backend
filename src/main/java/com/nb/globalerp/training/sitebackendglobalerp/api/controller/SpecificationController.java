@@ -2,6 +2,7 @@ package com.nb.globalerp.training.sitebackendglobalerp.api.controller;
 
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.SpecificationPatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.SpecificationRequest;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CountResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CreateResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.GroupResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.SpecificationResponse;
@@ -35,6 +36,11 @@ public class SpecificationController {
     public ResponseEntity<List<SpecificationResponse>> getList() {
         List<SpecificationResponse> response = specificationService.findAll();
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<CountResponse> count(){
+        return new ResponseEntity<>(new CountResponse(specificationService.count()), HttpStatus.OK);
     }
 
     @GetMapping

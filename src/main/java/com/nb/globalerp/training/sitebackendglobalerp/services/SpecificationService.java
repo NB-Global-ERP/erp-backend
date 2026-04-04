@@ -72,4 +72,8 @@ public class SpecificationService {
     public void delete(int id) {
         specificationRepository.deleteById(id);
     }
+
+    public Long count() {
+        return specificationRepository.count();
+    }
 }
