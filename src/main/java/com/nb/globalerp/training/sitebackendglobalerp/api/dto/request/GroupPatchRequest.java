@@ -35,10 +35,6 @@ public record GroupPatchRequest(
         @Positive(message = "Course completion ID must be positive")
         Integer courseCompletionId,
 
-        @Schema(example = "75.5")
-        @PositiveOrZero(message = "Average progress must be non-negative")
-        Float averageProgress,
-
         @Schema(example = "1")
         @Positive(message = "Specification ID must be positive")
         Integer specificationId

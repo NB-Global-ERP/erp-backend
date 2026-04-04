@@ -15,8 +15,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-
 @Entity
 @Table(name = "group_members")
 @Setter
@@ -39,5 +37,5 @@ public class GroupMember {
     private Group group;
 
     @Column(name = "completion_percent")
-    private BigDecimal completionPercent;
+    private float completionPercent;
 }

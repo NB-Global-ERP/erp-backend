@@ -4,6 +4,7 @@ import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.StudentPat
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.StudentRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CreateResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.StudentResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.StudentRiskResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.services.StudentService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
@@ -65,7 +66,7 @@ public class StudentController {
     }
 
     @GetMapping("/analytics/risk")
-    public ResponseEntity<?> getRisk() {
+    public ResponseEntity<List<StudentRiskResponse>> getRisk() {
         return ResponseEntity.ok(studentService.getStudentsRisk());
     }
 }
