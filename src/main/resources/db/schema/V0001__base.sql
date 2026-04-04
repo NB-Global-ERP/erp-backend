@@ -62,5 +62,6 @@ create table group_members (
   student_id int not null references students(id),
   group_id int not null references groups(id),
   completion_percent decimal(3, 2) not null default 0.00,
+  certificate_id varchar(255),
   unique (student_id, group_id)
 );

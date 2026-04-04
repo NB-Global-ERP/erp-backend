@@ -1,3 +1,6 @@
+server:
+  port: 8091
+
 spring:
   application:
     name: sitebackend-global-erp
@@ -12,8 +15,18 @@ spring:
       hibernate:
         format_sql: true
 
-server:
-  port: 8091
+  mongodb:
+    uri: ${MONGO_DB_URI:mongodb://mongo_user:mongo_password@localhost:27017/crackhack_db_mongo?authSource=admin}
+
+student-certificate:
+  position:
+    fio:
+      x: 170
+      y: 475
+    course:
+      x: 130
+      y: 535
+  filename-template: participant_cert_%s_%s
 
 entity-factory:
   kafka:

@@ -28,14 +28,17 @@ public class GroupMember {
     @Id
     private int id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "student_id")
     private Student student;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "group_id")
     private Group group;
 
     @Column(name = "completion_percent")
     private float completionPercent;
+
+    @Column(name = "certificate_id")
+    private String certificateId;
 }
