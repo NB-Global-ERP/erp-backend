@@ -2,8 +2,7 @@ package com.nb.globalerp.training.sitebackendglobalerp.api.controller;
 
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.CompanyPatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.CompanyRequest;
-import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CompanyResponse;
-import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CreateResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.*;
 import com.nb.globalerp.training.sitebackendglobalerp.services.CompanyService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
@@ -41,9 +40,14 @@ public class CompanyController {
         return new ResponseEntity<>(companyService.getAll(), HttpStatus.OK);
     }
 
+    @GetMapping("/analytics/companyStudentStats")
+    public ResponseEntity<CompanyStudentsStatsResponse> companyStudentStats(@RequestParam @Positive Integer id) {
+        return new ResponseEntity<> (companyService.getTrainingEfficiencyStats(id), HttpStatus.OK);
+    }
+
     @GetMapping("/count")
-    public ResponseEntity<Long> count(){
-        return new ResponseEntity<>(companyService.count(), HttpStatus.OK);
+    public ResponseEntity<CountResponse> count(){
+        return new ResponseEntity<>(new CountResponse(companyService.count()), HttpStatus.OK);
     }
 
     @PostMapping

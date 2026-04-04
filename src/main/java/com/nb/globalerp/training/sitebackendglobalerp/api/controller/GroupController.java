@@ -2,10 +2,7 @@ package com.nb.globalerp.training.sitebackendglobalerp.api.controller;
 
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupPatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupRequest;
-import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CourseCompletionStatusResponse;
-import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CreateResponse;
-import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.GroupResponse;
-import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.SimpleStatsResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.*;
 import com.nb.globalerp.training.sitebackendglobalerp.services.GroupService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -45,19 +42,19 @@ public class GroupController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/analytics/rowsNum")
-    public Long rowsNum(){
-        return groupService.getGroupNum();
+    @GetMapping("/analytics/count")
+    public ResponseEntity<CountResponse> rowsNum(){
+        return new ResponseEntity<>(new CountResponse(groupService.getGroupNum()), HttpStatus.OK);
     }
 
     @GetMapping("/analytics/basicStats/pricePerPerson")
-    public SimpleStatsResponse pricePerPersonStats(){
-        return groupService.getPricePerPersonStats();
+    public ResponseEntity<SimpleStatsResponse> pricePerPersonStats(){
+        return new ResponseEntity<>(groupService.getPricePerPersonStats(), HttpStatus.OK);
     }
 
     @GetMapping("/analytics/basicStats/timeStats")
-    public SimpleStatsResponse timeStats(){
-        return groupService.getTimeStats();
+    public ResponseEntity<SimpleStatsResponse> timeStats(){
+        return new ResponseEntity<>(groupService.getTimeStats(), HttpStatus.OK);
     }
 
     @PostMapping

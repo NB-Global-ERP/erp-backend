@@ -44,7 +44,7 @@ public class CourseController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/analytics/rowsNum")
+    @GetMapping("/analytics/count")
     public Long rowsNum(){
         return courseService.getCourseNum();
     }
