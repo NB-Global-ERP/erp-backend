@@ -4,6 +4,7 @@ import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.CoursePatc
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.CourseRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CourseCompletionStatusResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CourseResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CourseSimpleStatsResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CreateResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.services.CourseService;
 import jakarta.validation.Valid;
@@ -43,29 +44,9 @@ public class CourseController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/analytics/count")
-    public ResponseEntity<Long> count(){
-        return new ResponseEntity<>(courseService.count(), HttpStatus.OK);
-    }
-
-    @GetMapping("/analytics/totalDuration")
-    public ResponseEntity<Long> sum(){
-        return new ResponseEntity<>(courseService.totalDuration(), HttpStatus.OK);
-    }
-
-    @GetMapping("/analytics/avgDuration")
-    public ResponseEntity<Double> avg(){
-        return new ResponseEntity<>(courseService.averageDuration(), HttpStatus.OK);
-    }
-
-    @GetMapping("/analytics/minDuration")
-    public ResponseEntity<Integer> min(){
-        return new ResponseEntity<>(courseService.minDuration(), HttpStatus.OK);
-    }
-
-    @GetMapping("/analytics/maxDuration")
-    public ResponseEntity<Integer> max(){
-        return new ResponseEntity<>(courseService.maxDuration(), HttpStatus.OK);
+    @GetMapping("/analytics/basicStats")
+    public CourseSimpleStatsResponse basicStats(){
+        return courseService.getBasicStats();
     }
 
     @PostMapping

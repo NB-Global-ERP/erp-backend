@@ -5,17 +5,18 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Integer> {
-    @Query("SELECT SUM(c.durationInDays) FROM Course c")
-    Long sumDurationInDays();
-
-    @Query("SELECT AVG(c.durationInDays) FROM Course c")
-    Double avgDurationInDays();
-
-    @Query("SELECT MIN(c.durationInDays) FROM Course c")
-    Integer minDurationInDays();
-
-    @Query("SELECT MAX(c.durationInDays) FROM Course c")
-    Integer maxDurationInDays();
+    @Query("""
+        SELECT 
+            COUNT(c),
+            SUM(c.durationInDays),
+            AVG(c.durationInDays),
+            MIN(c.durationInDays),
+            MAX(c.durationInDays)
+        FROM Course c
+    """)
+    List<Object[]> getStats();
 }
