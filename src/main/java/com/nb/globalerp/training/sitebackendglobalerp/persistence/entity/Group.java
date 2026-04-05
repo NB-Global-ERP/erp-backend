@@ -46,6 +46,8 @@ public class Group {
     @Column(name = "price_per_person")
     private BigDecimal pricePerPerson;
 
+    @Column(name = "group_price")
+    private BigDecimal groupPrice;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_completion_id")

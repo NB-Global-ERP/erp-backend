@@ -93,21 +93,6 @@ public class StudentService {
         }
         if (request.email() != null) student.setEmail(request.email());
 
-
-        if(studentRepository.findByFirstNameAndLastNameAndMiddleNameAndCompany(
-                student.getFirstName(),
-                student.getLastName(),
-                student.getMiddleName(),
-                student.getCompany()
-        ).isPresent())
-        {
-            throw new StudentAlreadyExistsException("Обучающийся %s %s %s, работающий в компании %s, уже существует"
-                    .formatted(student.getLastName(),
-                            student.getFirstName(),
-                            student.getMiddleName(),
-                            student.getCompany().getCompanyName()));
-        }
-
         Student answer = studentRepository.save(student);
         return studentMapper.toStudentResponse(answer);
     }

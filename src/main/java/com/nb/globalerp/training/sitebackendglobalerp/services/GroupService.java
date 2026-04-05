@@ -75,7 +75,7 @@ public class GroupService {
 
         GroupResponse groupResponse = groupMapper.toGroupResponse(group);
         groupResponse.setParticipantCount(participantCount);
-        groupResponse.setGroupPrice(new BigDecimal(participantCount).multiply(group.getPricePerPerson()));
+
 
         return groupResponse;
     }
@@ -83,7 +83,7 @@ public class GroupService {
     @Transactional
     public int create(GroupRequest request) {
         Course course = courseRepository.findById(request.courseId())
-            .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + request.courseId()));
+            .orElseThrow(() -> new EntityNotFoundException("Course not found with id: " + request.courseId()));
 
         CourseCompletionStatus courseCompletionStatus = courseCompletionStatusRepository.findById(request.courseCompletionId())
             .orElseThrow(() -> new EntityNotFoundException("CourseCompletionId not found with id: " + request.courseCompletionId()));
@@ -100,7 +100,7 @@ public class GroupService {
         group.setSpecification(specification);
 
         group.setPricePerPerson(course.getPricePerPerson());
-
+        group.setGroupPrice(BigDecimal.ZERO);
         return groupRepository.save(group).getId();
     }
 
@@ -118,41 +118,51 @@ public class GroupService {
                     .orElseThrow(() -> new EntityNotFoundException("CourseCompletionId not found with id: " + request.courseCompletionId())));
         }
 
-        if(request.specificationId() != null && !Objects.equals(request.specificationId(), group.getSpecification().getId())){
-            group.setSpecification(specificationRepository.findById(request.specificationId())
-                    .orElseThrow(() -> new EntityNotFoundException("Specification not found with id: " + request.specificationId())));
-
-        }
-
-        if(request.courseId() != null && !Objects.equals(request.courseId(), group.getCourse().getId())){
-            group.setCourse(courseRepository.findById(request.courseId())
-                    .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + request.courseId())));
-
-            Specification specification = group.getSpecification();
-
-            BigDecimal studentsCount = BigDecimal.valueOf(groupMemberRepository.countByGroupId(id));
-
-            BigDecimal total_amount_excluding_vat = specification.getTotalAmountExcludingVat().subtract(
-                    group.getPricePerPerson().multiply(studentsCount));
-
-            total_amount_excluding_vat = total_amount_excluding_vat.add(group.getCourse().getPricePerPerson().multiply(studentsCount));
-
-            setAll(total_amount_excluding_vat, specification);
-
-            specificationRepository.save(specification);
-
-            group.setPricePerPerson(group.getCourse().getPricePerPerson());
-        }
-
         long participantCount = groupMemberRepository.countByGroupId(id);
 
         GroupResponse groupResponse = groupMapper.toGroupResponse(groupRepository.save(group));
         groupResponse.setParticipantCount(participantCount);
-        groupResponse.setGroupPrice(new BigDecimal(participantCount).multiply(group.getPricePerPerson()));
+
 
         return groupResponse;
     }
 
+<<<<<<< Updated upstream
+=======
+    @Transactional
+    public List<Integer> addStudentToGroup(AddStudentToGroupRequest addStudentToGroupRequest) {
+        List<Integer> idsMembers = new ArrayList<>();
+
+        for (var studentAdditional : addStudentToGroupRequest.studentAdditionals()) {
+            int studentId = studentAdditional.studentId();
+            int groupId = studentAdditional.groupId();
+            float progress = studentAdditional.initialProgress();
+
+            Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + groupId));
+
+            Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new EntityNotFoundException("Student not found with id: " + studentId));
+
+            GroupMember groupMember = GroupMember.builder()
+                .student(student)
+                .group(group)
+                .completionPercent(progress)
+                .build();
+
+            GroupMember savedGroupMember = groupMemberRepository.save(groupMember);
+            Specification specification = group.getSpecification();
+            BigDecimal newTotalAmountExcludingVat = group.getSpecification().getTotalAmountExcludingVat().add(group.getPricePerPerson());
+
+            setAll(newTotalAmountExcludingVat, specification);
+            countAverageProgressAndPrice(groupId);
+            idsMembers.add(savedGroupMember.getId());
+        }
+
+        return idsMembers;
+    }
+    @Transactional
+>>>>>>> Stashed changes
     public DataResponse check(int id, Instant dataBegin){
         Group group = groupRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + id));
@@ -162,6 +172,7 @@ public class GroupService {
 
     }
 
+    @Transactional
     public void delete(int id) {
         Group group = groupRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + id));
@@ -177,6 +188,14 @@ public class GroupService {
         groupMemberRepository.deleteAll(groupMembers);
 
         groupRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteWithOutSpecification(Group group){
+        List<GroupMember> groupMembers = groupMemberRepository.findGroupMemberByGroupId(group.getId());
+        groupMemberRepository.deleteAll(groupMembers);
+
+        groupRepository.delete(group);
     }
 
     public Long getGroupNum() {
@@ -199,13 +218,15 @@ public class GroupService {
         return simpleStatsMapper.toSimpleStats(result.getFirst());
     }
 
-    private void countAverageProgress(Integer groupId){
+    private void countAverageProgressAndPrice(Integer groupId){
         Group group = groupRepository.findById(groupId).orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + groupId));
 
         float averageProgress = groupMemberRepository.sumPercentByGroupId(groupId)
                 / groupMemberRepository.countByGroupId(groupId);
 
         group.setAverageProgress(averageProgress);
+        BigDecimal newGroupPrice = group.getGroupPrice().add(group.getPricePerPerson());
+        group.setGroupPrice(newGroupPrice);
 
         groupRepository.save(group);
 
@@ -223,5 +244,7 @@ public class GroupService {
                 .subtract(specification.getVatAmount22Percent()));
 
     }
+
+
 
 }
