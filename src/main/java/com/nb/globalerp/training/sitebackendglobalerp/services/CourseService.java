@@ -82,7 +82,8 @@ public class CourseService {
         return courseMapper.toCourseResponse(newCourse);
     }
 
-    public void delete(int id) {courseRepository.deleteById(id);
+    public void delete(int id) {
+        courseRepository.deleteById(id);
     }
 
     public Long getCourseNum() {
