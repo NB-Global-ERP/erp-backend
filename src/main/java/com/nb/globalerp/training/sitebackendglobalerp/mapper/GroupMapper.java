@@ -20,6 +20,7 @@ public interface GroupMapper {
     @Mapping(target = "courseCompletion", source = "courseCompletionStatus.name")
     @Mapping(target = "specificationId", source = "specification.id")
     @Mapping(target = "courseId", source = "course.id")
+    @Mapping(target = "groupPrice", source = "groupPrice")
     GroupResponse toGroupResponse(Group group);
 
     @Mapping(target = "dateEnd", ignore = true)

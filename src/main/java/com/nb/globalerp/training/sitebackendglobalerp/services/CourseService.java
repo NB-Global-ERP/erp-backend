@@ -31,24 +31,26 @@ public class CourseService {
     private final SimpleStatsMapper simpleStatsMapper;
     private final GroupRepository groupRepository;
 
+    @Transactional
     public List<CourseResponse> findAll() {
         return courseRepository.findAll()
                 .stream()
                 .map(courseMapper::toCourseResponse)
                 .collect(Collectors.toList());
     }
-
+    @Transactional
     public CourseResponse findById(int id) {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Course not found with id: " + id));
         return courseMapper.toCourseResponse(course);
     }
-
+    @Transactional
     public int create(CourseRequest request) {
         Course course = courseMapper.toCourseEntity(request);
         return courseRepository.save(course).getId();
     }
 
+    @Transactional
     public int createFromExternalSystem(EduCourseCreateDto eduCourseCreateDto) {
         Course course = courseMapper.toCourseEntity(eduCourseCreateDto);
         course.setName(eduCourseCreateDto.course());
@@ -82,14 +84,17 @@ public class CourseService {
         return courseMapper.toCourseResponse(newCourse);
     }
 
+    @Transactional
     public void delete(int id) {
         courseRepository.deleteById(id);
     }
 
+    @Transactional
     public Long getCourseNum() {
         return courseRepository.count();
     }
 
+    @Transactional
     public SimpleStatsResponse getBasicStats() {
         List<Object[]> result = courseRepository.getStats();
         if (result.isEmpty()) {

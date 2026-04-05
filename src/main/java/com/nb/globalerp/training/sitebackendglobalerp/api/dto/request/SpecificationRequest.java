@@ -20,20 +20,20 @@ public record SpecificationRequest(
         @Schema(example = "1")
         @NotNull(message = "Company ID is required")
         @Positive(message = "Company ID must be positive")
-        Integer companyId,
+        Integer companyId
 
-        @Schema(example = "100000.00")
-        @NotNull(message = "Total amount excluding VAT is required")
-        @DecimalMin(value = "0.00", message = "Amount must be non-negative")
-        BigDecimal totalAmountExcludingVat,
-
-        @Schema(example = "22000.00")
-        @NotNull(message = "VAT amount is required")
-        @DecimalMin(value = "0.00", message = "Amount must be non-negative")
-        BigDecimal vatAmount22Percent,
-
-        @Schema(example = "122000.00")
-        @NotNull(message = "Total amount including VAT is required")
-        @DecimalMin(value = "0.00", message = "Amount must be non-negative")
-        BigDecimal totalAmountIncludingVat
+//        @Schema(example = "100000.00")
+//        @NotNull(message = "Total amount excluding VAT is required")
+//        @DecimalMin(value = "0.00", message = "Amount must be non-negative")
+//        BigDecimal totalAmountExcludingVat,
+//
+//        @Schema(example = "22000.00")
+//        @NotNull(message = "VAT amount is required")
+//        @DecimalMin(value = "0.00", message = "Amount must be non-negative")
+//        BigDecimal vatAmount22Percent,
+//
+//        @Schema(example = "122000.00")
+//        @NotNull(message = "Total amount including VAT is required")
+//        @DecimalMin(value = "0.00", message = "Amount must be non-negative")
+//        BigDecimal totalAmountIncludingVat
 ) {}

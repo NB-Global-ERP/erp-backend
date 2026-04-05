@@ -21,9 +21,9 @@ create table specifications (
   datetime timestamp not null,
   number int not null,
   company_id int not null references companies(id),
-  total_amount_excluding_vat decimal(12, 2) not null,
-  vat_amount_22_percent decimal(12, 2) not null,
-  total_amount_including_vat decimal(12, 2) not null
+  total_amount_excluding_vat decimal(12, 2) not null default 0.00,
+  vat_amount_22_percent decimal(12, 2) not null default 0.00,
+  total_amount_including_vat decimal(12, 2) not null default 0.00
 );
 
 create table course_completion_statuses (
@@ -40,6 +40,7 @@ create table groups (
   date_begin timestamp not null,
   date_end timestamp not null,
   price_per_person decimal(12, 2) not null,
+  group_price decimal not null default 0.00,
   course_completion_id int not null references course_completion_statuses(id),
   average_progress float not null default 0.00,
   specification_id int not null references specifications(id)
