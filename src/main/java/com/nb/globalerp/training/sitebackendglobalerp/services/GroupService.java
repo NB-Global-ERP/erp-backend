@@ -132,23 +132,14 @@ public class GroupService {
 
             Specification specification = group.getSpecification();
 
-            BigDecimal studentsCount = (BigDecimal)groupMemberRepository.findGroupMemberByGroupId(id);
+            BigDecimal studentsCount = BigDecimal.valueOf(groupMemberRepository.countByGroupId(id));
 
             BigDecimal total_amount_excluding_vat = specification.getTotalAmountExcludingVat().subtract(
                     group.getPricePerPerson().multiply(studentsCount));
 
-            total_amount_excluding_vat.add(group.getCourse().getPricePerPerson().multiply(studentsCount));
+            total_amount_excluding_vat = total_amount_excluding_vat.add(group.getCourse().getPricePerPerson().multiply(studentsCount));
 
-            BigDecimal percent = new BigDecimal("22");
-            BigDecimal vat_amount_22_percent = total_amount_excluding_vat
-                    .multiply(percent)
-                    .divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP);
-
-            BigDecimal totalAmountIncludingVat = total_amount_excluding_vat.add(vat_amount_22_percent);
-
-            specification.setTotalAmountExcludingVat(total_amount_excluding_vat);
-            specification.setVatAmount22Percent(vat_amount_22_percent);
-            specification.setTotalAmountIncludingVat(totalAmountIncludingVat);
+            setAll(total_amount_excluding_vat, specification);
 
             specificationRepository.save(specification);
 
@@ -196,13 +187,26 @@ public class GroupService {
     public DataResponse check(int id, Instant dataBegin){
         Group group = groupRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + id));
-        Integer size = group.getCourse().getDurationInDays();
+        int size = group.getCourse().getDurationInDays();
 
         return new DataResponse(WorkCalendarService.calculateEndDate(dataBegin, size));
 
     }
 
     public void delete(int id) {
+        Group group = groupRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + id));
+
+        Specification specification = group.getSpecification();
+        BigDecimal totalAmountExcludingVat = specification.getTotalAmountExcludingVat();
+
+        totalAmountExcludingVat = totalAmountExcludingVat.subtract(BigDecimal.valueOf(groupMemberRepository.countByGroupId(id)).multiply(group.getPricePerPerson()));
+
+        setAll(totalAmountExcludingVat, specification);
+
+        List<GroupMember> groupMembers = groupMemberRepository.findGroupMemberByGroupId(id);
+        groupMemberRepository.deleteAll(groupMembers);
+
         groupRepository.deleteById(id);
     }
 
@@ -237,4 +241,18 @@ public class GroupService {
         groupRepository.save(group);
 
     }
+
+    private void setAll(BigDecimal totalAmountExcludingVat, Specification specification){
+        specification.setTotalAmountExcludingVat(totalAmountExcludingVat);
+
+        BigDecimal percent = new BigDecimal("22");
+        specification.setVatAmount22Percent(totalAmountExcludingVat
+                .multiply(percent)
+                .divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP));
+
+        specification.setTotalAmountIncludingVat(specification.getTotalAmountExcludingVat()
+                .subtract(specification.getVatAmount22Percent()));
+
+    }
+
 }
