@@ -83,7 +83,6 @@ public class GroupController {
         return  ResponseEntity.status(HttpStatus.OK).body(groupService.check(id, dataBegin));
     }
 
-
     @PostMapping("/add/students")
     public ResponseEntity<AddStudentToGroupResponse> addStudentToGroup(
         @RequestBody @Valid @NotNull AddStudentToGroupRequest addStudentToGroupRequest
