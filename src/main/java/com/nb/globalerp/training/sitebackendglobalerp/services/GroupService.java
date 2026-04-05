@@ -1,6 +1,5 @@
 package com.nb.globalerp.training.sitebackendglobalerp.services;
 
-import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.AddStudentToGroupRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupPatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.DataResponse;
@@ -13,7 +12,6 @@ import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.CourseC
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Group;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.GroupMember;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Specification;
-import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Student;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.CourseCompletionStatusRepository;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.CourseRepository;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.GroupMemberRepository;
@@ -21,19 +19,14 @@ import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.GroupRepo
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.SpecificationRepository;
 import com.nb.globalerp.training.sitebackendglobalerp.utils.WorkCalendarService;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -127,42 +120,7 @@ public class GroupService {
         return groupResponse;
     }
 
-<<<<<<< Updated upstream
-=======
     @Transactional
-    public List<Integer> addStudentToGroup(AddStudentToGroupRequest addStudentToGroupRequest) {
-        List<Integer> idsMembers = new ArrayList<>();
-
-        for (var studentAdditional : addStudentToGroupRequest.studentAdditionals()) {
-            int studentId = studentAdditional.studentId();
-            int groupId = studentAdditional.groupId();
-            float progress = studentAdditional.initialProgress();
-
-            Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + groupId));
-
-            Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new EntityNotFoundException("Student not found with id: " + studentId));
-
-            GroupMember groupMember = GroupMember.builder()
-                .student(student)
-                .group(group)
-                .completionPercent(progress)
-                .build();
-
-            GroupMember savedGroupMember = groupMemberRepository.save(groupMember);
-            Specification specification = group.getSpecification();
-            BigDecimal newTotalAmountExcludingVat = group.getSpecification().getTotalAmountExcludingVat().add(group.getPricePerPerson());
-
-            setAll(newTotalAmountExcludingVat, specification);
-            countAverageProgressAndPrice(groupId);
-            idsMembers.add(savedGroupMember.getId());
-        }
-
-        return idsMembers;
-    }
-    @Transactional
->>>>>>> Stashed changes
     public DataResponse check(int id, Instant dataBegin){
         Group group = groupRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + id));
