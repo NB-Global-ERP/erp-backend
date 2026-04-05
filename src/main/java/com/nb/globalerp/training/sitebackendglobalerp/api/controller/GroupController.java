@@ -1,16 +1,13 @@
 package com.nb.globalerp.training.sitebackendglobalerp.api.controller;
 
-import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.AddStudentToGroupRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupPatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupRequest;
-import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.AddStudentToGroupResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CountResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CreateResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.GroupResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.SimpleStatsResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.services.GroupService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -78,13 +75,5 @@ public class GroupController {
     public ResponseEntity<Void> delete(@RequestParam @Positive int id) {
         groupService.delete(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping("/add/students")
-    public ResponseEntity<AddStudentToGroupResponse> addStudentToGroup(
-        @RequestBody @Valid @NotNull AddStudentToGroupRequest addStudentToGroupRequest
-    ) {
-        var response = groupService.addStudentToGroup(addStudentToGroupRequest);
-        return ResponseEntity.ok().body(new AddStudentToGroupResponse(response));
     }
 }

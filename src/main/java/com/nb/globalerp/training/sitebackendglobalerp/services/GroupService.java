@@ -1,6 +1,5 @@
 package com.nb.globalerp.training.sitebackendglobalerp.services;
 
-import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.AddStudentToGroupRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupPatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.GroupResponse;
@@ -10,15 +9,12 @@ import com.nb.globalerp.training.sitebackendglobalerp.mapper.SimpleStatsMapper;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Course;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.CourseCompletionStatus;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Group;
-import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.GroupMember;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Specification;
-import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Student;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.CourseCompletionStatusRepository;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.CourseRepository;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.GroupMemberRepository;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.GroupRepository;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.SpecificationRepository;
-import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.StudentRepository;
 import com.nb.globalerp.training.sitebackendglobalerp.utils.WorkCalendarService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -38,7 +33,6 @@ import java.util.stream.Collectors;
 @Service
 public class GroupService {
 
-    private final StudentRepository studentRepository;
     private final CourseCompletionStatusRepository courseCompletionStatusRepository;
     private final CourseRepository courseRepository;
     private final SpecificationRepository specificationRepository;
@@ -156,35 +150,6 @@ public class GroupService {
         groupResponse.setGroupPrice(new BigDecimal(participantCount).multiply(group.getPricePerPerson()));
 
         return groupResponse;
-    }
-
-    @Transactional
-    public List<Integer> addStudentToGroup(AddStudentToGroupRequest addStudentToGroupRequest) {
-        List<Integer> idsMembers = new ArrayList<>();
-
-        for (var studentAdditional : addStudentToGroupRequest.studentAdditionals()) {
-            int studentId = studentAdditional.studentId();
-            int groupId = studentAdditional.groupId();
-            float progress = studentAdditional.initialProgress();
-
-            Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + groupId));
-
-            Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new EntityNotFoundException("Student not found with id: " + studentId));
-
-            GroupMember groupMember = GroupMember.builder()
-                .student(student)
-                .group(group)
-                .completionPercent(progress)
-                .build();
-
-            GroupMember savedGroupMember = groupMemberRepository.save(groupMember);
-            countAverageProgress(groupId);
-            idsMembers.add(savedGroupMember.getId());
-        }
-
-        return idsMembers;
     }
 
     public void delete(int id) {

@@ -2,6 +2,7 @@ package com.nb.globalerp.training.sitebackendglobalerp.services;
 
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,9 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
 
+    @Value("${spring.mail.username}")
+    private String from;
+
     public void sendReminder(String to, String subject, String html) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
@@ -20,7 +24,7 @@ public class EmailService {
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(html, true);
-            helper.setFrom("malinovskiy.denis@yandex.ru");
+            helper.setFrom(from);
 
             mailSender.send(message);
         } catch (Exception e) {
