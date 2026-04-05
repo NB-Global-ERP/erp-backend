@@ -119,7 +119,7 @@ public class CertificateService {
         Student student = groupMember.getStudent();
         Course course = groupMember.getGroup().getCourse();
 
-        String fio = "%s %s %s".formatted(student.getFirstName(), student.getMiddleName(), student.getLastName());
+        String fio = "%s %s %s".formatted(student.getFirstName(), student.getLastName(), student.getMiddleName());
         String courseName = course.getName() + ": " + course.getDescription();
 
         byte[] newCert = generateNewCertificate(fio, courseName, pdfCertBytes);
@@ -176,11 +176,17 @@ public class CertificateService {
 
             CertificationProperty.Position position = certificationProperty.position();
 
-            content.beginText();
-            content.setFont(font, 15);
-            content.newLineAtOffset(position.course().x(), position.course().y());
-            content.showText(courseDesc);
-            content.endText();
+            String[] splitCourseDesc = courseDesc.split("\\n");
+            int fz = 12;
+            int shift = fz * (splitCourseDesc.length - 1);
+            for (String desc : splitCourseDesc) {
+                content.beginText();
+                content.setFont(font, 12);
+                content.newLineAtOffset(position.course().x(), position.course().y() + shift);
+                content.showText(desc);
+                content.endText();
+                shift -= fz;
+            }
 
             content.beginText();
             content.setFont(font, 18);

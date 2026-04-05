@@ -2,6 +2,9 @@ server:
   port: 8091
 
 spring:
+  config:
+    import:
+      - email/credential.properties
   application:
     name: sitebackend-global-erp
   datasource:
@@ -24,7 +27,7 @@ spring:
     host: smtp.yandex.ru
     port: 465
     username: malinovskiy.denis@yandex.ru
-    password: password
+    password: ${email.password}
     properties:
       mail.smtp.auth: true
       mail.smtp.ssl.enable: true
@@ -42,7 +45,7 @@ student-certificate:
       x: 170
       y: 475
     course:
-      x: 130
+      x: 140
       y: 535
   filename-template: participant_cert_%s_%s
 

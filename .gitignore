@@ -925,3 +925,5 @@ gradle-app.setting
 
 #Macos
 .DS_Store
+
+credential.properties
