@@ -3,6 +3,7 @@ package com.nb.globalerp.training.sitebackendglobalerp.services;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.AddStudentToGroupRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupPatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupRequest;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.DataResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.GroupResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.SimpleStatsResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.mapper.GroupMapper;
@@ -21,13 +22,18 @@ import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.Specifica
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.StudentRepository;
 import com.nb.globalerp.training.sitebackendglobalerp.utils.WorkCalendarService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -185,6 +191,15 @@ public class GroupService {
         }
 
         return idsMembers;
+    }
+
+    public DataResponse check(int id, Instant dataBegin){
+        Group group = groupRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + id));
+        Integer size = group.getCourse().getDurationInDays();
+
+        return new DataResponse(WorkCalendarService.calculateEndDate(dataBegin, size));
+
     }
 
     public void delete(int id) {
