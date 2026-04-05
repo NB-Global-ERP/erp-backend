@@ -1,7 +1,9 @@
 package com.nb.globalerp.training.sitebackendglobalerp.services;
 
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.AddStudentToGroupRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupPatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupRequest;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.DataResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.GroupResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.SimpleStatsResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.mapper.GroupMapper;
@@ -9,7 +11,9 @@ import com.nb.globalerp.training.sitebackendglobalerp.mapper.SimpleStatsMapper;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Course;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.CourseCompletionStatus;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Group;
+import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.GroupMember;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Specification;
+import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Student;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.CourseCompletionStatusRepository;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.CourseRepository;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.GroupMemberRepository;
@@ -17,13 +21,19 @@ import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.GroupRepo
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.SpecificationRepository;
 import com.nb.globalerp.training.sitebackendglobalerp.utils.WorkCalendarService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -120,23 +130,14 @@ public class GroupService {
 
             Specification specification = group.getSpecification();
 
-            BigDecimal studentsCount = (BigDecimal)groupMemberRepository.findGroupMemberByGroupId(id);
+            BigDecimal studentsCount = BigDecimal.valueOf(groupMemberRepository.countByGroupId(id));
 
             BigDecimal total_amount_excluding_vat = specification.getTotalAmountExcludingVat().subtract(
                     group.getPricePerPerson().multiply(studentsCount));
 
-            total_amount_excluding_vat.add(group.getCourse().getPricePerPerson().multiply(studentsCount));
+            total_amount_excluding_vat = total_amount_excluding_vat.add(group.getCourse().getPricePerPerson().multiply(studentsCount));
 
-            BigDecimal percent = new BigDecimal("22");
-            BigDecimal vat_amount_22_percent = total_amount_excluding_vat
-                    .multiply(percent)
-                    .divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP);
-
-            BigDecimal totalAmountIncludingVat = total_amount_excluding_vat.add(vat_amount_22_percent);
-
-            specification.setTotalAmountExcludingVat(total_amount_excluding_vat);
-            specification.setVatAmount22Percent(vat_amount_22_percent);
-            specification.setTotalAmountIncludingVat(totalAmountIncludingVat);
+            setAll(total_amount_excluding_vat, specification);
 
             specificationRepository.save(specification);
 
@@ -152,7 +153,29 @@ public class GroupService {
         return groupResponse;
     }
 
+    public DataResponse check(int id, Instant dataBegin){
+        Group group = groupRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + id));
+        int size = group.getCourse().getDurationInDays();
+
+        return new DataResponse(WorkCalendarService.calculateEndDate(dataBegin, size));
+
+    }
+
     public void delete(int id) {
+        Group group = groupRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + id));
+
+        Specification specification = group.getSpecification();
+        BigDecimal totalAmountExcludingVat = specification.getTotalAmountExcludingVat();
+
+        totalAmountExcludingVat = totalAmountExcludingVat.subtract(BigDecimal.valueOf(groupMemberRepository.countByGroupId(id)).multiply(group.getPricePerPerson()));
+
+        setAll(totalAmountExcludingVat, specification);
+
+        List<GroupMember> groupMembers = groupMemberRepository.findGroupMemberByGroupId(id);
+        groupMemberRepository.deleteAll(groupMembers);
+
         groupRepository.deleteById(id);
     }
 
@@ -187,4 +210,18 @@ public class GroupService {
         groupRepository.save(group);
 
     }
+
+    private void setAll(BigDecimal totalAmountExcludingVat, Specification specification){
+        specification.setTotalAmountExcludingVat(totalAmountExcludingVat);
+
+        BigDecimal percent = new BigDecimal("22");
+        specification.setVatAmount22Percent(totalAmountExcludingVat
+                .multiply(percent)
+                .divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP));
+
+        specification.setTotalAmountIncludingVat(specification.getTotalAmountExcludingVat()
+                .subtract(specification.getVatAmount22Percent()));
+
+    }
+
 }

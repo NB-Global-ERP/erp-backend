@@ -1,13 +1,17 @@
 package com.nb.globalerp.training.sitebackendglobalerp.api.controller;
 
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.AddStudentToGroupRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupPatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CountResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CreateResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.GroupResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.SimpleStatsResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.*;
 import com.nb.globalerp.training.sitebackendglobalerp.services.GroupService;
+import com.nb.globalerp.training.sitebackendglobalerp.utils.WorkCalendarService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Instant;
 import java.util.List;
 
 @Validated
@@ -75,5 +80,10 @@ public class GroupController {
     public ResponseEntity<Void> delete(@RequestParam @Positive int id) {
         groupService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/check")
+    public ResponseEntity<DataResponse> check(@RequestParam @Positive int id,@RequestParam Instant dataBegin){
+        return  ResponseEntity.status(HttpStatus.OK).body(groupService.check(id, dataBegin));
     }
 }

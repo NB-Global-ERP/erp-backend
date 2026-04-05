@@ -8,8 +8,12 @@ import com.nb.globalerp.training.sitebackendglobalerp.kafka.dto.EduCourseCreateD
 import com.nb.globalerp.training.sitebackendglobalerp.mapper.CourseMapper;
 import com.nb.globalerp.training.sitebackendglobalerp.mapper.SimpleStatsMapper;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Course;
+import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Group;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.CourseRepository;
+import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.GroupRepository;
+import com.nb.globalerp.training.sitebackendglobalerp.utils.WorkCalendarService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,6 +29,7 @@ public class CourseService {
     private final CourseRepository courseRepository;
     private final CourseMapper courseMapper;
     private final SimpleStatsMapper simpleStatsMapper;
+    private final GroupRepository groupRepository;
 
     public List<CourseResponse> findAll() {
         return courseRepository.findAll()
@@ -52,6 +57,7 @@ public class CourseService {
         return courseRepository.save(course).getId();
     }
 
+    @Transactional
     public CourseResponse update(int id, CoursePatchRequest request) {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Course not found with id: " + id));
@@ -61,10 +67,23 @@ public class CourseService {
         if (request.durationInDays() != null) course.setDurationInDays(request.durationInDays());
         if (request.pricePerPerson() != null) course.setPricePerPerson(request.pricePerPerson());
 
-        return courseMapper.toCourseResponse(courseRepository.save(course));
+        Course newCourse = courseRepository.save(course);
+
+        if(request.durationInDays() != null){
+            List<Group> groups = groupRepository.findAllByCourse_Id(id);
+
+            for(Group group : groups){
+                group.setDateEnd(WorkCalendarService.calculateEndDate(group.getDateBegin(), request.durationInDays()));
+            }
+
+            groupRepository.saveAll(groups);
+        }
+
+        return courseMapper.toCourseResponse(newCourse);
     }
 
-    public void delete(int id) {courseRepository.deleteById(id);
+    public void delete(int id) {
+        courseRepository.deleteById(id);
     }
 
     public Long getCourseNum() {
