@@ -228,7 +228,7 @@ public class GroupService {
                 .divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP));
 
         specification.setTotalAmountIncludingVat(specification.getTotalAmountExcludingVat()
-                .subtract(specification.getVatAmount22Percent()));
+                .add(specification.getVatAmount22Percent()));
 
         specificationRepository.save(specification);
 
