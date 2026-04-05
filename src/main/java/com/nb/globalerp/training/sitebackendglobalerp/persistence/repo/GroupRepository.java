@@ -29,4 +29,6 @@ public interface GroupRepository extends JpaRepository<Group, Integer> {
         FROM groups
     """, nativeQuery = true)
     List<Object[]> getTimeStats();
+
+    List<Group> findAllByCourse_Id(int courseId);
 }
