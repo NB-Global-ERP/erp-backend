@@ -27,11 +27,9 @@ import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.core.io.ClassPathResource;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.*;
 import java.time.Instant;
 
 @Service
@@ -50,11 +48,11 @@ public class CertificateService {
     private final CertificationProperty certificationProperty;
 
     public CertificateService(
-        GridFsTemplate gridFsTemplate,
-        GridFsOperations gridFsOperations,
-        GroupMemberRepository groupMemberRepository,
-        CertificationProperty certificationProperty,
-        EmailService emailService
+            GridFsTemplate gridFsTemplate,
+            GridFsOperations gridFsOperations,
+            GroupMemberRepository groupMemberRepository,
+            CertificationProperty certificationProperty,
+            EmailService emailService
     ) {
         this.groupMemberRepository = groupMemberRepository;
         this.gridFsTemplate = gridFsTemplate;
@@ -62,9 +60,19 @@ public class CertificateService {
         this.certificationProperty = certificationProperty;
         this.emailService = emailService;
 
-        try (var inputStream = new FileInputStream("src/main/resources/cerificate/certificate_template.pdf");) {
-            this.pdfCertBytes = inputStream.readAllBytes();
-            this.fontFile = new File("src/main/resources/cerificate/arial.ttf");
+        try {
+            var resource = new ClassPathResource("cerificate/certificate_template.pdf");
+            try (var inputStream = resource.getInputStream()) {
+                this.pdfCertBytes = inputStream.readAllBytes();
+            }
+
+            var fontResource = new ClassPathResource("cerificate/arial.ttf");
+            File tempFile = File.createTempFile("arial", ".ttf");
+            try (InputStream is = fontResource.getInputStream();
+                 OutputStream os = new FileOutputStream(tempFile)) {
+                is.transferTo(os);
+            }
+            this.fontFile = tempFile;
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }

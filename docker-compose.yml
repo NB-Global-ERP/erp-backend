@@ -85,8 +85,9 @@ services:
       PG_USER: postgres
       PG_PASSWORD: postgres
       KAFKA_URL: erp_kafka:9092
-      MONGO_DB_URI: mongodb://mongo_user:mongo_password@mongo-1:27017/erp_db_mongo?authSource=admin
+      MONGO_DB_URI: mongodb://mongo_user:mongo_password@erp_mongo:27017/erp_db_mongo?authSource=admin
     ports:
       - "8091:8091"
     depends_on:
       - erp_db_postgres
+      - erp_mongo
