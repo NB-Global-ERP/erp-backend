@@ -11,6 +11,7 @@ import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.GroupMe
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Student;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.GroupMemberRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -23,6 +24,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.data.mongodb.gridfs.GridFsResource;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,9 +35,11 @@ import java.io.FileInputStream;
 import java.time.Instant;
 
 @Service
+@Slf4j
 public class CertificateService {
 
     private final GroupMemberRepository groupMemberRepository;
+    private final EmailService emailService;
 
     private final GridFsTemplate gridFsTemplate;
     private final GridFsOperations gridFsOperations;
@@ -49,12 +53,14 @@ public class CertificateService {
         GridFsTemplate gridFsTemplate,
         GridFsOperations gridFsOperations,
         GroupMemberRepository groupMemberRepository,
-        CertificationProperty certificationProperty
+        CertificationProperty certificationProperty,
+        EmailService emailService
     ) {
         this.groupMemberRepository = groupMemberRepository;
         this.gridFsTemplate = gridFsTemplate;
         this.gridFsOperations = gridFsOperations;
         this.certificationProperty = certificationProperty;
+        this.emailService = emailService;
 
         try (var inputStream = new FileInputStream("src/main/resources/cerificate/certificate_template.pdf");) {
             this.pdfCertBytes = inputStream.readAllBytes();
@@ -117,7 +123,33 @@ public class CertificateService {
         ObjectId fileId = gridFsTemplate.store(new ByteArrayInputStream(newCert), fileName, "application/pdf", metadata);
 
         groupMember.setCertificateId(fileId.toHexString());
+        sendCertificateEmailAsync(student, courseName, newCert, fileName);
+
         return new CreateCertificateResponse(fileId.toHexString());
+    }
+
+    @Async
+    public void sendCertificateEmailAsync(Student student, String courseName, byte[] pdfBytes, String fileName) {
+        try {
+            String email = student.getEmail();
+            if (email == null || email.isBlank()) {
+                log.warn("No email for student {}, skipping", student.getId());
+                return;
+            }
+
+            String subject = "Ваш сертификат о прохождении курса";
+            String html = """
+            <h2>Поздравляем!</h2>
+            <p>Вы успешно завершили курс:</p>
+            <b>%s</b>
+            <p>Сертификат во вложении.</p>
+            """.formatted(courseName);
+
+            emailService.sendWithAttachment(email, subject, html, pdfBytes, fileName + ".pdf");
+            log.info("Certificate email sent to {}", email);
+        } catch (Exception e) {
+            log.error("Failed to send certificate email to {}: {}", student.getEmail(), e.getMessage(), e);
+        }
     }
 
     private byte[] generateNewCertificate(String fio, String courseDesc, byte[] templatePdfCert) {

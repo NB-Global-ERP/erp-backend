@@ -14,6 +14,12 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  task:
+    execution:
+      pool:
+        core-size: 4
+        max-size: 8
+        queue-capacity: 100
   mail:
     host: smtp.yandex.ru
     port: 465
@@ -22,7 +28,6 @@ spring:
     properties:
       mail.smtp.auth: true
       mail.smtp.ssl.enable: true
-      mail.smtp.socketFactory.class: javax.net.ssl.SSLSocketFactory
       mail.smtp.connectiontimeout: 30000
       mail.smtp.timeout: 30000
       mail.smtp.writetimeout: 30000
