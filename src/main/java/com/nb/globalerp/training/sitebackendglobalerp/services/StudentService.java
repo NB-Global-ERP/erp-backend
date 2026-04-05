@@ -8,8 +8,10 @@ import com.nb.globalerp.training.sitebackendglobalerp.kafka.dto.EduParticipantCr
 import com.nb.globalerp.training.sitebackendglobalerp.exception.StudentAlreadyExistsException;
 import com.nb.globalerp.training.sitebackendglobalerp.mapper.StudentMapper;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Company;
+import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.GroupMember;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Student;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.CompanyRepository;
+import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.GroupMemberRepository;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.StudentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,9 @@ public class StudentService {
     private final StudentRepository studentRepository;
     private final StudentMapper studentMapper;
     private final CompanyRepository companyRepository;
+
+    private final GroupMemberRepository groupMemberRepository;
+    private final GroupMemberService groupMemberService;
 
     public StudentResponse findById(Integer id) {
         Student student = studentRepository.findById(id)
@@ -98,7 +103,21 @@ public class StudentService {
     }
 
     public void delete(Integer id) {
+        List<GroupMember> groupMembers = groupMemberRepository.findGroupMemberByStudent_Id(id);
+
+        for(GroupMember groupMember : groupMembers){
+            groupMemberService.deleteByEntity(groupMember);
+        }
         studentRepository.deleteById(id);
+    }
+
+    public void deleteByEntity(Student student){
+        List<GroupMember> groupMembers = groupMemberRepository.findGroupMemberByStudent_Id(student.getId());
+
+        for(GroupMember groupMember : groupMembers){
+            groupMemberService.deleteByEntity(groupMember);
+        }
+        studentRepository.delete(student);
     }
 
     public List<StudentResponse> getAll(){

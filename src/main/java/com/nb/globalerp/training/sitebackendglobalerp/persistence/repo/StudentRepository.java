@@ -81,4 +81,6 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
             AND gm.completion_percent < 1.0;
     """, nativeQuery = true)
     List<StudentNotifyProjection> getStudentsToNotify();
+
+    List<Student> getStudentsByCompany_Id(int companyId);
 }

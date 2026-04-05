@@ -7,7 +7,11 @@ import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CompanySt
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CourseResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.mapper.CompanyMapper;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Company;
+import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Specification;
+import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Student;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.CompanyRepository;
+import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.SpecificationRepository;
+import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.StudentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +27,11 @@ public class CompanyService {
 
     private final CompanyRepository companyRepository;
     private final CompanyMapper companyMapper;
+
+    private final SpecificationService specificationService;
+    private final SpecificationRepository specificationRepository;
+    private final StudentRepository studentRepository;
+    private final StudentService studentService;
 
     public List<CompanyResponse> findAll() {
         return companyRepository.findAll()
@@ -60,11 +69,21 @@ public class CompanyService {
     }
 
     public void delete(int id) {
-        try{
-            companyRepository.deleteById(id);
-        } catch (Exception ignored) {
 
+        List<Student> students = studentRepository.getStudentsByCompany_Id(id);
+
+        for(Student student : students){
+            studentService.deleteByEntity(student);
         }
+
+        List<Specification> specifications = specificationRepository.findSpecificationByCompany_Id(id);
+
+        for(Specification specification : specifications){
+            specificationService.deleteByEntity(specification);
+        }
+
+        companyRepository.deleteById(id);
+
     }
 
     public List<CompanyResponse> getAll() {

@@ -15,6 +15,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "group_members")
 @Setter
@@ -41,4 +43,8 @@ public class GroupMember {
 
     @Column(name = "certificate_id")
     private String certificateId;
+
+    @Column(name = "price_per_person")
+    private BigDecimal pricePerPerson;
+
 }

@@ -18,6 +18,8 @@ public interface GroupMemberRepository extends JpaRepository<GroupMember, Intege
 
     List<GroupMember> findGroupMemberByGroupId(int groupId);
 
+    List<GroupMember> findGroupMemberByStudent_Id(Integer studentId);
+
     @Query("SELECT SUM(gm.completionPercent) FROM GroupMember gm WHERE gm.group.id = :groupId")
     Float sumPercentByGroupId(@Param("groupId") Integer groupId);
 }

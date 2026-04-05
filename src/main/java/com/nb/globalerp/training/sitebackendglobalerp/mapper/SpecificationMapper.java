@@ -17,9 +17,9 @@ public interface SpecificationMapper {
     @Mapping(target = "companyId", source = "company.id")
     SpecificationResponse toSpecificationResponse(Specification specification);
 
-    @Mapping(target = "totalAmountExcludingVat", ignore = true)
-    @Mapping(target = "vatAmount22Percent", ignore = true)
-    @Mapping(target = "totalAmountIncludingVat", ignore = true)
+//    @Mapping(target = "totalAmountExcludingVat", ignore = true)
+//    @Mapping(target = "vatAmount22Percent", ignore = true)
+//    @Mapping(target = "totalAmountIncludingVat", ignore = true)
     Specification toSpecificationEntity(SpecificationRequest request);
 
     void updateSpecificationEntity(@MappingTarget Specification specification, SpecificationPatchRequest request);

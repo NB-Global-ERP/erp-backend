@@ -87,7 +87,6 @@ public class SpecificationService {
             }
             specification.setNumber(request.number());
         }
-        specificationMapper.updateSpecificationEntity(specification, request);
 
         return specificationMapper.toSpecificationResponse(specificationRepository.save(specification));
     }
@@ -103,6 +102,16 @@ public class SpecificationService {
         }
         specificationRepository.deleteById(id);
 
+    }
+
+    @Transactional
+    public void deleteByEntity(Specification specification){
+        List<Group> groups = groupRepository.findAllBySpecification_Id(specification.getId());
+
+        for(Group group : groups){
+            groupService.deleteWithOutSpecification(group);
+        }
+        specificationRepository.delete(specification);
     }
 
     public Long count() {

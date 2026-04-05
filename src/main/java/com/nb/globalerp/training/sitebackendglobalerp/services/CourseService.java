@@ -30,6 +30,8 @@ public class CourseService {
     private final CourseMapper courseMapper;
     private final SimpleStatsMapper simpleStatsMapper;
     private final GroupRepository groupRepository;
+    private final GroupService groupService;
+
 
     @Transactional
     public List<CourseResponse> findAll() {
@@ -86,7 +88,16 @@ public class CourseService {
 
     @Transactional
     public void delete(int id) {
+
+        List<Group> groups = groupRepository.findAllByCourse_Id(id);
+
+        for(Group group : groups){
+            groupService.delete(group.getId());
+        }
+
         courseRepository.deleteById(id);
+
+
     }
 
     @Transactional

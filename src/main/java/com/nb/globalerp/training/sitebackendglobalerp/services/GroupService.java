@@ -58,6 +58,7 @@ public class GroupService {
                     GroupResponse dto = groupMapper.toGroupResponse(group);
                     long participantCount = groupMemberRepository.countByGroupId(dto.getId());
                     dto.setParticipantCount(participantCount);
+                    dto.setGroupPrice(group.getGroupPrice());
                     return dto;
                 })
                 .toList();
@@ -228,6 +229,8 @@ public class GroupService {
 
         specification.setTotalAmountIncludingVat(specification.getTotalAmountExcludingVat()
                 .subtract(specification.getVatAmount22Percent()));
+
+        specificationRepository.save(specification);
 
     }
 
