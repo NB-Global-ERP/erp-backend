@@ -3,9 +3,7 @@ package com.nb.globalerp.training.sitebackendglobalerp.services;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.AddStudentToGroupRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupPatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupRequest;
-import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.DataResponse;
-import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.GroupResponse;
-import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.SimpleStatsResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.*;
 import com.nb.globalerp.training.sitebackendglobalerp.mapper.GroupMapper;
 import com.nb.globalerp.training.sitebackendglobalerp.mapper.SimpleStatsMapper;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Course;
@@ -14,11 +12,7 @@ import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Group;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.GroupMember;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Specification;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Student;
-import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.CourseCompletionStatusRepository;
-import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.CourseRepository;
-import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.GroupMemberRepository;
-import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.GroupRepository;
-import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.SpecificationRepository;
+import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.*;
 import com.nb.globalerp.training.sitebackendglobalerp.utils.WorkCalendarService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -35,6 +29,7 @@ import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -51,19 +46,45 @@ public class GroupService {
 
     private final GroupMapper groupMapper;
     private final SimpleStatsMapper simpleStatsMapper;
+    private final StudentRepository studentRepository;
 
     @Transactional
-    public List<GroupResponse> findAll() {
-        return groupRepository.findAll()
+    public ListGroupResponse findAll() {
+        List<Group> groups =  groupRepository.findAll();
+
+        List<GroupResponse> response = groups
                 .stream()
                 .map(group -> {
                     GroupResponse dto = groupMapper.toGroupResponse(group);
                     long participantCount = groupMemberRepository.countByGroupId(dto.getId());
                     dto.setParticipantCount(participantCount);
-                    dto.setGroupPrice(new BigDecimal(participantCount).multiply(dto.getPricePerPerson()));
                     return dto;
                 })
-                .collect(Collectors.toList());
+                .toList();
+
+        List<IdPair> pairs = new ArrayList<>();
+
+        Map<Course, List<Group>> byCourse = groups.stream()
+                .collect(Collectors.groupingBy(Group::getCourse));
+
+        for(List<Group> courseGroups : byCourse.values()){
+
+            for (int i = 0; i < courseGroups.size(); i++) {
+                for (int j = i + 1; j < courseGroups.size(); j++) {
+
+                    Group g1 = courseGroups.get(i);
+                    Group g2 = courseGroups.get(j);
+
+                    if (isOverlap(g1, g2)) {
+                        pairs.add(new IdPair(g1.getId(), g2.getId()));
+                    }
+                }
+            }
+        }
+
+        ListGroupResponse answer = new ListGroupResponse(response, pairs);
+
+        return answer;
     }
 
     @Transactional
@@ -127,8 +148,7 @@ public class GroupService {
         return groupResponse;
     }
 
-<<<<<<< Updated upstream
-=======
+
     @Transactional
     public List<Integer> addStudentToGroup(AddStudentToGroupRequest addStudentToGroupRequest) {
         List<Integer> idsMembers = new ArrayList<>();
@@ -161,8 +181,8 @@ public class GroupService {
 
         return idsMembers;
     }
+
     @Transactional
->>>>>>> Stashed changes
     public DataResponse check(int id, Instant dataBegin){
         Group group = groupRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + id));
@@ -243,6 +263,11 @@ public class GroupService {
         specification.setTotalAmountIncludingVat(specification.getTotalAmountExcludingVat()
                 .subtract(specification.getVatAmount22Percent()));
 
+    }
+
+    private boolean isOverlap(Group g1, Group g2) {
+        return !g1.getDateBegin().isAfter(g2.getDateEnd()) &&
+                !g2.getDateBegin().isAfter(g1.getDateEnd());
     }
 
 

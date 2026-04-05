@@ -38,8 +38,8 @@ public class GroupController {
     private final GroupService groupService;
 
     @GetMapping("/list")
-    public ResponseEntity<List<GroupResponse>> getList() {
-        List<GroupResponse> response = groupService.findAll();
+    public ResponseEntity<ListGroupResponse> getList() {
+        ListGroupResponse response = groupService.findAll();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
