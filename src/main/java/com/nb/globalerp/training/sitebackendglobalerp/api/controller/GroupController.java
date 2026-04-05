@@ -3,6 +3,10 @@ package com.nb.globalerp.training.sitebackendglobalerp.api.controller;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.AddStudentToGroupRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupPatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupRequest;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CountResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.CreateResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.GroupResponse;
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.SimpleStatsResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.*;
 import com.nb.globalerp.training.sitebackendglobalerp.services.GroupService;
 import com.nb.globalerp.training.sitebackendglobalerp.utils.WorkCalendarService;
@@ -81,13 +85,5 @@ public class GroupController {
     @PostMapping("/check")
     public ResponseEntity<DataResponse> check(@RequestParam @Positive int id,@RequestParam Instant dataBegin){
         return  ResponseEntity.status(HttpStatus.OK).body(groupService.check(id, dataBegin));
-    }
-
-    @PostMapping("/add/students")
-    public ResponseEntity<AddStudentToGroupResponse> addStudentToGroup(
-        @RequestBody @Valid @NotNull AddStudentToGroupRequest addStudentToGroupRequest
-    ) {
-        var response = groupService.addStudentToGroup(addStudentToGroupRequest);
-        return ResponseEntity.ok().body(new AddStudentToGroupResponse(response));
     }
 }

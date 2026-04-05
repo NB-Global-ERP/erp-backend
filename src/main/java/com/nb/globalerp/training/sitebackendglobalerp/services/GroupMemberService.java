@@ -1,19 +1,22 @@
 package com.nb.globalerp.training.sitebackendglobalerp.services;
 
+import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.AddStudentToGroupRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.request.GroupMemberPatchRequest;
 import com.nb.globalerp.training.sitebackendglobalerp.api.dto.response.GroupMemberResponse;
 import com.nb.globalerp.training.sitebackendglobalerp.mapper.GroupMemberMapper;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Group;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.GroupMember;
+import com.nb.globalerp.training.sitebackendglobalerp.persistence.entity.Student;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.GroupMemberRepository;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.GroupRepository;
+import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.StudentRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -22,11 +25,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class GroupMemberService {
-    private final GroupMemberRepository groupMemberRepository;
-    private final GroupMemberMapper mapper;
 
+    private final StudentRepository studentRepository;
+    private final GroupMemberRepository groupMemberRepository;
     private final GroupRepository groupRepository;
 
+    private final GroupMemberMapper mapper;
 
     public List<GroupMemberResponse> getByGroupId(Integer groupId){
         return groupMemberRepository.findGroupMemberByGroupId(groupId)
@@ -35,6 +39,34 @@ public class GroupMemberService {
                 .toList();
     }
 
+    @Transactional
+    public List<Integer> addStudentToGroup(AddStudentToGroupRequest addStudentToGroupRequest) {
+        List<Integer> idsMembers = new ArrayList<>();
+
+        for (var studentAdditional : addStudentToGroupRequest.studentAdditionals()) {
+            int studentId = studentAdditional.studentId();
+            int groupId = studentAdditional.groupId();
+            float progress = studentAdditional.initialProgress();
+
+            Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + groupId));
+
+            Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new EntityNotFoundException("Student not found with id: " + studentId));
+
+            GroupMember groupMember = GroupMember.builder()
+                .student(student)
+                .group(group)
+                .completionPercent(progress)
+                .build();
+
+            GroupMember savedGroupMember = groupMemberRepository.save(groupMember);
+            countAverageProgress(groupId);
+            idsMembers.add(savedGroupMember.getId());
+        }
+
+        return idsMembers;
+    }
 
     public List<GroupMemberResponse> patchByGroupId(List<GroupMemberPatchRequest> list, Integer groupId){
         List<Integer> ids = list.stream()

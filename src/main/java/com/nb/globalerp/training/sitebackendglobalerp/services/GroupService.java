@@ -19,7 +19,6 @@ import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.CourseRep
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.GroupMemberRepository;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.GroupRepository;
 import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.SpecificationRepository;
-import com.nb.globalerp.training.sitebackendglobalerp.persistence.repo.StudentRepository;
 import com.nb.globalerp.training.sitebackendglobalerp.utils.WorkCalendarService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -44,7 +43,6 @@ import java.util.stream.Collectors;
 @Service
 public class GroupService {
 
-    private final StudentRepository studentRepository;
     private final CourseCompletionStatusRepository courseCompletionStatusRepository;
     private final CourseRepository courseRepository;
     private final SpecificationRepository specificationRepository;
@@ -153,35 +151,6 @@ public class GroupService {
         groupResponse.setGroupPrice(new BigDecimal(participantCount).multiply(group.getPricePerPerson()));
 
         return groupResponse;
-    }
-
-    @Transactional
-    public List<Integer> addStudentToGroup(AddStudentToGroupRequest addStudentToGroupRequest) {
-        List<Integer> idsMembers = new ArrayList<>();
-
-        for (var studentAdditional : addStudentToGroupRequest.studentAdditionals()) {
-            int studentId = studentAdditional.studentId();
-            int groupId = studentAdditional.groupId();
-            float progress = studentAdditional.initialProgress();
-
-            Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + groupId));
-
-            Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new EntityNotFoundException("Student not found with id: " + studentId));
-
-            GroupMember groupMember = GroupMember.builder()
-                .student(student)
-                .group(group)
-                .completionPercent(progress)
-                .build();
-
-            GroupMember savedGroupMember = groupMemberRepository.save(groupMember);
-            countAverageProgress(groupId);
-            idsMembers.add(savedGroupMember.getId());
-        }
-
-        return idsMembers;
     }
 
     public DataResponse check(int id, Instant dataBegin){
